@@ -63,6 +63,7 @@ const prompt = ai.definePrompt({
   2. Incorporate keywords from the job description naturally.
   3. Provide specific, actionable suggestions in the "suggestions" output field.
   4. Calculate the match score based on relevance, tone, and keyword alignment.
+  5. The optimizedCoverLetter should be a JSON string that can be parsed, with the same structure as the input coverLetterText.
 
   Output format: JSON
   {
