@@ -24,7 +24,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import {
   Carousel,
@@ -33,7 +32,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
@@ -45,6 +43,13 @@ const products = [
       'Craft an ATS-optimized resume in minutes. Choose a template, fill in your details, and let our AI boost your visibility with industry-specific suggestions.',
     video_hint: 'resume builder interface',
     href: '/dashboard/resume-builder',
+  },
+  {
+    icon: <PenSquare className="h-8 w-8" />,
+    title: 'Cover Letter Generator',
+    description: 'Generate compelling cover letters tailored to each job description. Customize tone, structure, and keywords for maximum impact.',
+    video_hint: 'cover letter generator interface',
+    href: '/dashboard/cover-letter',
   },
   {
     icon: <Briefcase className="h-8 w-8" />,
@@ -109,11 +114,6 @@ const faqs = [
     question: 'What is an ATS and why is it important?',
     answer:
       'An Applicant Tracking System (ATS) is a software application that enables the electronic handling of recruitment needs. Many companies use ATS to filter candidates based on keywords and formatting. Our platform helps you create resumes that are optimized to pass through these systems.',
-  },
-  {
-    question: 'Can I create a CV for academic purposes?',
-    answer:
-      'Absolutely! Our platform is also designed for academic and research positions, with dedicated sections for publications, research experience, awards, and more.',
   },
 ];
 

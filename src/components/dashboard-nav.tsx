@@ -24,6 +24,7 @@ import {
 const links = [
   { href: '/dashboard', label: 'Dashboard', icon: <Home /> },
   { href: '/dashboard/resume-builder', label: 'Resume Builder', icon: <FileText /> },
+  { href: '/dashboard/cover-letter', label: 'Cover Letter', icon: <Mail /> },
   { href: '/dashboard/my-jobs', label: 'MyJobs', icon: <Briefcase /> },
 ];
 

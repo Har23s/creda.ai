@@ -1,69 +1,61 @@
 'use server';
 
 /**
- * @fileOverview Generates and optimizes a cover letter.
+ * @fileOverview A flow to generate a cover letter based on a job description.
  *
- * - generateCoverLetter - A function that generates a cover letter.
- * - CoverLetterInput - The input type for the generateCoverLetter function.
- * - CoverLetterOutput - The return type for the generateCoverLetter function.
+ * - generateCoverLetter - A function that handles the cover letter generation process.
+ * - GenerateCoverLetterInput - The input type for the generateCoverLetter function.
+ * - GenerateCoverLetterOutput - The return type for the generateCoverLetter function.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const CoverLetterInputSchema = z.object({
-  jobDescription: z
-    .string()
-    .describe('The job description for the position being applied for.'),
+const GenerateCoverLetterInputSchema = z.object({
   coverLetterText: z
     .string()
-    .describe('The text content of the cover letter to be optimized, in JSON format.'),
+    .describe('The text content of the cover letter to be generated.'),
+  jobDescription: z
+    .string()
+    .describe('The job description to match the cover letter against.'),
 });
-export type CoverLetterInput = z.infer<typeof CoverLetterInputSchema>;
+export type GenerateCoverLetterInput = z.infer<typeof GenerateCoverLetterInputSchema>;
 
-const CoverLetterOutputSchema = z.object({
+const GenerateCoverLetterOutputSchema = z.object({
   optimizedCoverLetter: z
     .string()
-    .describe('The optimized cover letter text with suggested improvements, in JSON format.'),
-  suggestions: z
-    .array(z.string())
-    .describe('List of specific suggestions made by the AI.'),
-  matchScore: z
-    .number()
-    .describe(
-      'An estimated score (out of 100) for how well the cover letter matches the job description.'
-    ),
+    .describe('The optimized cover letter text with suggested improvements.'),
+  suggestions: z.array(z.string()).describe('List of specific suggestions made by the AI.'),
+  matchScore: z.number().describe('An estimated match score for the optimized cover letter.'),
 });
-export type CoverLetterOutput = z.infer<typeof CoverLetterOutputSchema>;
+export type GenerateCoverLetterOutput = z.infer<typeof GenerateCoverLetterOutputSchema>;
 
-export async function generateCoverLetter(
-  input: CoverLetterInput
-): Promise<CoverLetterOutput> {
+export async function generateCoverLetter(input: GenerateCoverLetterInput): Promise<GenerateCoverLetterOutput> {
   return generateCoverLetterFlow(input);
 }
 
 const prompt = ai.definePrompt({
-  name: 'coverLetterPrompt',
-  input: {schema: CoverLetterInputSchema},
-  output: {schema: CoverLetterOutputSchema},
-  prompt: `You are an expert career advisor specializing in cover letters.
+  name: 'generateCoverLetterPrompt',
+  input: {schema: GenerateCoverLetterInputSchema},
+  output: {schema: GenerateCoverLetterOutputSchema},
+  prompt: `You are an expert cover letter writer, specializing in tailoring applications to job descriptions.
 
-  Given a cover letter (in JSON format) and a job description, analyze the cover letter for missing keywords, tone, and overall match with the job.
+  Given a cover letter draft and a job description, analyze the draft for missing keywords, areas for improvement, and overall impact.
   Provide an optimized cover letter, a list of specific suggestions, and an estimated match score (out of 100).
 
-  Cover Letter (JSON):
+  Cover Letter Draft:
   {{coverLetterText}}
 
   Job Description:
   {{jobDescription}}
 
-  Optimize the cover letter to better match the job description.
+  Optimize the cover letter to better match the job description and improve its impact.
   Follow these instructions:
-  1. Ensure the tone is professional and confident.
-  2. Incorporate keywords from the job description naturally into the letter body.
-  3. Provide specific, actionable suggestions in the "suggestions" output field.
-  4. Calculate the match score based on relevance, tone, and keyword alignment.
-  5. The optimizedCoverLetter should be a JSON string that can be parsed, with the same structure as the input coverLetterText. Only modify the 'letterBody' field.
+  1. Ensure that all important keywords from the job description are present in the cover letter.
+  2. Rephrase sentences to be more impactful and align with the company's tone.
+  3. Provide specific suggestions in the "suggestions" output field.
+  4. Calculate the match score based on the completeness and relevance of the cover letter content.
+  5. Return the full optimized cover letter as a JSON object string in the 'optimizedCoverLetter' field.
 
   Output format: JSON
   {
@@ -76,10 +68,10 @@ const prompt = ai.definePrompt({
 const generateCoverLetterFlow = ai.defineFlow(
   {
     name: 'generateCoverLetterFlow',
-    inputSchema: CoverLetterInputSchema,
-    outputSchema: CoverLetterOutputSchema,
+    inputSchema: GenerateCoverLetterInputSchema,
+    outputSchema: GenerateCoverLetterOutputSchema,
   },
-  async (input) => {
+  async input => {
     const {output} = await prompt(input);
     return output!;
   }

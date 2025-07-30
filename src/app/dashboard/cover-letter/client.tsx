@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   generateCoverLetter,
-  type CoverLetterOutput,
+  type GenerateCoverLetterOutput,
 } from '@/ai/flows/cover-letter-generation';
 
 import { Button } from '@/components/ui/button';
@@ -39,47 +39,47 @@ import { Progress } from '@/components/ui/progress';
 import {
   Download,
   Loader2,
+  PlusCircle,
   Sparkles,
+  Trash2,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
 const coverLetterSchema = z.object({
-  yourName: z.string().min(1, 'Your name is required'),
+  fullName: z.string().min(1, 'Full name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(1, 'Phone number is required'),
   companyName: z.string().min(1, 'Company name is required'),
   hiringManager: z.string().optional(),
-  letterBody: z.string().min(50, 'Cover letter body is too short'),
+  body: z.string().min(10, 'Body is too short'),
 });
 
 type CoverLetterValues = z.infer<typeof coverLetterSchema>;
 
 const defaultValues: CoverLetterValues = {
-  yourName: 'Ada Lovelace',
+  fullName: 'Ada Lovelace',
+  email: 'ada.lovelace@example.com',
+  phone: '123-456-7890',
   companyName: 'Tech Innovations Inc.',
   hiringManager: 'Mr. Charles Babbage',
-  letterBody: `Dear Mr. Babbage,
-
-I am writing to express my keen interest in the Software Engineer position at Tech Innovations Inc., which I discovered on your company's career page. With my extensive background in developing and scaling complex web applications, I am confident that I possess the skills and experience necessary to be a valuable asset to your team.
-
-In my previous role, I led the development of a microservices architecture that resulted in a 40% improvement in system scalability. I am proficient in TypeScript, React, and Node.js and am passionate about writing clean, efficient code.
-
-I am eager to learn more about this opportunity and discuss how my qualifications can benefit your organization. Thank you for your time and consideration.
-
-Sincerely,
-Ada Lovelace`,
+  body:
+    'I am writing to express my keen interest in the Software Engineer position at Tech Innovations Inc., which I discovered on your company\'s career page. With my extensive background in developing and scaling complex web applications, I am confident that I possess the skills and experience necessary to be a valuable asset to your team. In my previous role, I led the development of a microservices architecture that resulted in a 40% improvement in system scalability. I am proficient in TypeScript, React, and Node.js and am passionate about writing clean, efficient code. I am eager to learn more about this opportunity and discuss how my qualifications can benefit your organization. Thank you for your time and consideration.',
 };
 
 const templates = [
-  { name: 'Classic', thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
-  { name: 'Modern', thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
-  { name: 'Minimalist', thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
-  { name: 'Professional', thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
+  { name: 'Classic', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
+  { name: 'Modern', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
+  { name: 'Minimalist', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
+  { name: 'Professional', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
 ];
 
 export function CoverLetterClient() {
   const [jobDescription, setJobDescription] = useState('');
-  const [aiResult, setAiResult] = useState<CoverLetterOutput | null>(null);
+  const [aiResult, setAiResult] = useState<GenerateCoverLetterOutput | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -88,6 +88,8 @@ export function CoverLetterClient() {
     defaultValues,
     mode: 'onChange',
   });
+
+  const coverLetterText = JSON.stringify(form.getValues(), null, 2);
 
   const handleImproveWithAI = async () => {
     if (!jobDescription) {
@@ -101,25 +103,12 @@ export function CoverLetterClient() {
     setIsLoading(true);
     setAiResult(null);
     try {
-      const coverLetterText = JSON.stringify(form.getValues());
       const result = await generateCoverLetter({
         coverLetterText,
         jobDescription,
       });
       setAiResult(result);
-      if (result.optimizedCoverLetter) {
-        try {
-            const updatedValues = JSON.parse(result.optimizedCoverLetter);
-            form.setValue('letterBody', updatedValues.letterBody, { shouldValidate: true });
-        } catch(e) {
-            console.error("Failed to parse optimized cover letter", e);
-             toast({
-                title: 'Error updating letter',
-                description: 'The AI returned an invalid format. Please try again.',
-                variant: 'destructive',
-            });
-        }
-      }
+      form.setValue('body', JSON.parse(result.optimizedCoverLetter).body, { shouldValidate: true });
       toast({
         title: 'Cover Letter Improved!',
         description: 'AI suggestions have been applied.',
@@ -144,10 +133,10 @@ export function CoverLetterClient() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="font-headline text-2xl">
-                  Cover Letter Generator
+                  Cover Letter Builder
                 </CardTitle>
                 <CardDescription>
-                  Craft a compelling cover letter for your job application.
+                  Fill out the sections below to create your cover letter.
                 </CardDescription>
               </div>
               <Sheet>
@@ -203,72 +192,47 @@ export function CoverLetterClient() {
               <form className="space-y-8">
                 <div className="space-y-4">
                   <h3 className="font-headline text-lg font-semibold">
-                    Recipient & Your Details
+                    Personal Details
                   </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormField
-                      name="yourName"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Your Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name="companyName"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Company Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name="hiringManager"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hiring Manager (Optional)</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <FormField name="fullName" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
+                    <FormField name="email" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Email</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
+                    <FormField name="phone" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
+                  </div>
+                </div>
+                
+                <Separator />
+
+                <div className="space-y-4">
+                  <h3 className="font-headline text-lg font-semibold">
+                    Recipient Details
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <FormField name="companyName" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
+                    <FormField name="hiringManager" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Hiring Manager (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
                   </div>
                 </div>
 
                 <Separator />
 
-                <FormField
-                  control={form.control}
-                  name="letterBody"
-                  render={({ field }) => (
+                <FormField name="body" control={form.control} render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-headline text-lg font-semibold">
-                        Cover Letter Body
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Write your cover letter here..."
-                          rows={20}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
+                        <FormLabel className="font-headline text-lg font-semibold">Body</FormLabel>
+                        <FormControl><Textarea {...field} rows={15} /></FormControl>
+                        <FormMessage />
                     </FormItem>
-                  )}
-                />
+                )}/>
+                
               </form>
             </Form>
           </CardContent>
@@ -296,20 +260,24 @@ export function CoverLetterClient() {
                       data-ai-hint={template.hint}
                       className="rounded-md border-2 border-transparent hover:border-primary"
                     />
-                    <p className="mt-1 text-center text-sm">{template.name}</p>
+                    <p className="text-center text-sm mt-1">{template.name}</p>
                   </div>
                 ))}
               </div>
               <Separator />
               <div className="aspect-[8.5/11] w-full overflow-auto rounded-md border bg-white p-4 shadow-sm">
-                <p className="whitespace-pre-wrap text-xs text-gray-800">
-                  {form.watch('letterBody')}
-                </p>
+                <h2 className="text-xl font-bold text-black">{form.watch('fullName')}</h2>
+                <div className="text-xs text-gray-600 flex gap-4">
+                    <span>{form.watch('email')}</span>
+                    <span>{form.watch('phone')}</span>
+                </div>
+                <hr className="my-2" />
+                <p className="text-xs text-gray-800 whitespace-pre-wrap">{form.watch('body')}</p>
               </div>
             </div>
           </CardContent>
           <CardHeader>
-            <Button className="w-full">
+             <Button className="w-full">
               <Download className="mr-2 h-4 w-4" /> Download PDF
             </Button>
           </CardHeader>
