@@ -47,13 +47,6 @@ const products = [
     href: '/dashboard/resume-builder',
   },
   {
-    icon: <PenSquare className="h-8 w-8" />,
-    title: 'Cover Letter Generator',
-    description: 'Generate compelling cover letters tailored to each job description. Customize tone, structure, and keywords for maximum impact.',
-    video_hint: 'cover letter generation',
-    href: '/dashboard/cover-letter'
-  },
-  {
     icon: <Linkedin className="h-8 w-8" />,
     title: 'LinkedIn Optimizer',
     description:
@@ -185,9 +178,6 @@ export default function Home() {
             >
               <Link href="/signup">
                 <Button size="lg">Get Started</Button>
-              </Link>
-              <Link href="#products">
-                <Button size="lg" variant="ghost">See How It Works <ArrowRight className="ml-2 h-4 w-4" /></Button>
               </Link>
             </motion.div>
           </div>
