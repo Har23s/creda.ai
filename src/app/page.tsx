@@ -23,6 +23,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardFooter,
   CardTitle,
 } from '@/components/ui/card';
 import {
@@ -62,32 +63,32 @@ const products = [
 
 const testimonials = [
   {
-    companyLogo: 'https://placehold.co/100x40.png',
-    companyLogoHint: 'company logo',
+    companyLogo: 'https://logo.clearbit.com/amazon.com',
+    companyLogoHint: 'Amazon logo',
     jobRole: 'Front-End Developer',
     companyName: 'Amazon',
   },
     {
-    companyLogo: 'https://placehold.co/100x40.png',
-    companyLogoHint: 'company logo',
+    companyLogo: 'https://logo.clearbit.com/google.com',
+    companyLogoHint: 'Google logo',
     jobRole: 'Product Manager',
     companyName: 'Google',
   },
     {
-    companyLogo: 'https://placehold.co/100x40.png',
-    companyLogoHint: 'company logo',
+    companyLogo: 'https://logo.clearbit.com/figma.com',
+    companyLogoHint: 'Figma logo',
     jobRole: 'UX/UI Designer',
     companyName: 'Figma',
   },
     {
-    companyLogo: 'https://placehold.co/100x40.png',
-    companyLogoHint: 'company logo',
+    companyLogo: 'https://logo.clearbit.com/stripe.com',
+    companyLogoHint: 'Stripe logo',
     jobRole: 'Backend Engineer',
     companyName: 'Stripe',
   },
     {
-    companyLogo: 'https://placehold.co/100x40.png',
-    companyLogoHint: 'company logo',
+    companyLogo: 'https://logo.clearbit.com/netflix.com',
+    companyLogoHint: 'Netflix logo',
     jobRole: 'Data Scientist',
     companyName: 'Netflix',
   },
@@ -263,7 +264,7 @@ export default function Home() {
                         width={100}
                         height={40}
                         data-ai-hint={testimonial.companyLogoHint}
-                        className="mb-4"
+                        className="mb-4 object-contain"
                       />
                       <p className='font-semibold'>{testimonial.jobRole}</p>
                       <p className='text-sm text-muted-foreground'>{testimonial.companyName}</p>
