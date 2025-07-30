@@ -63,36 +63,36 @@ const products = [
 
 const testimonials = [
   {
-    companyLogo: 'https://logo.clearbit.com/figma.com',
-    companyLogoHint: 'Figma logo',
-    jobRole: 'UX/UI Designer',
-    companyName: 'Figma',
+    companyLogo: 'https://logo.clearbit.com/notion.so',
+    companyLogoHint: 'Notion logo',
+    companyName: 'Notion',
   },
-    {
-    companyLogo: 'https://logo.clearbit.com/stripe.com',
-    companyLogoHint: 'Stripe logo',
-    jobRole: 'Backend Engineer',
-    companyName: 'Stripe',
+  {
+    companyLogo: 'https://logo.clearbit.com/retool.com',
+    companyLogoHint: 'Retool logo',
+    companyName: 'Retool',
   },
-    {
-    companyLogo: 'https://logo.clearbit.com/netflix.com',
-    companyLogoHint: 'Netflix logo',
-    jobRole: 'Data Scientist',
-    companyName: 'Netflix',
+  {
+    companyLogo: 'https://logo.clearbit.com/loom.com',
+    companyLogoHint: 'Loom logo',
+    companyName: 'Loom',
   },
-      {
-    companyLogo: 'https://logo.clearbit.com/amazon.com',
-    companyLogoHint: 'Amazon logo',
-    jobRole: 'Front-End Developer',
-    companyName: 'Amazon',
+  {
+    companyLogo: 'https://logo.clearbit.com/ramp.com',
+    companyLogoHint: 'Ramp logo',
+    companyName: 'Ramp',
   },
-    {
-    companyLogo: 'https://logo.clearbit.com/google.com',
-    companyLogoHint: 'Google logo',
-    jobRole: 'Product Manager',
-    companyName: 'Google',
+  {
+    companyLogo: 'https://logo.clearbit.com/brex.com',
+    companyLogoHint: 'Brex logo',
+    companyName: 'Brex',
   },
-]
+  {
+    companyLogo: 'https://logo.clearbit.com/zapier.com',
+    companyLogoHint: 'Zapier logo',
+    companyName: 'Zapier',
+  },
+];
 
 
 const faqs = [
@@ -241,7 +241,7 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-                Trusted by professionals at top companies
+                Trusted by professionals at top startups
               </h2>
             </div>
             <Carousel
@@ -266,8 +266,6 @@ export default function Home() {
                         data-ai-hint={testimonial.companyLogoHint}
                         className="mb-4 h-10 object-contain"
                       />
-                      <p className='font-semibold'>{testimonial.jobRole}</p>
-                      <p className='text-sm text-muted-foreground'>{testimonial.companyName}</p>
                     </Card>
                   </CarouselItem>
                 ))}
