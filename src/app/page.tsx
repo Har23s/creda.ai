@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -47,6 +48,13 @@ const products = [
     href: '/dashboard/resume-builder',
   },
   {
+    icon: <PenSquare className="h-8 w-8" />,
+    title: 'Cover Letter',
+    description: 'Generate compelling cover letters tailored to each job application.',
+    video_hint: 'cover letter generation',
+    href: '/dashboard/cover-letter'
+  },
+  {
     icon: <Linkedin className="h-8 w-8" />,
     title: 'LinkedIn Optimizer',
     description:
@@ -60,39 +68,6 @@ const products = [
     description: 'Discover relevant jobs and track your applications with ease.',
     video_hint: 'job search dashboard',
     href: '/dashboard/my-jobs',
-  },
-];
-
-const testimonials = [
-  {
-    name: 'Sarah L.',
-    title: 'Software Engineer',
-    quote:
-      "Creda.ai's resume builder helped me land my dream job at a FAANG company. The ATS score feature is a game-changer!",
-  },
-  {
-    name: 'Michael B.',
-    title: 'Product Manager',
-    quote:
-      'The LinkedIn optimizer gave me actionable feedback that significantly increased my profile views from recruiters. Highly recommended!',
-  },
-  {
-    name: 'Jessica P.',
-    title: 'UX Designer',
-    quote:
-      'As a designer, aesthetics matter. Creda.ai offers beautiful templates that are also functional and ATS-friendly.',
-  },
-  {
-    name: 'Chris G.',
-    title: 'Data Scientist',
-    quote:
-      'The AI suggestions for my resume were spot-on. It helped me highlight the right skills for the jobs I was targeting.',
-  },
-  {
-    name: 'Emily R.',
-    title: 'Marketing Manager',
-    quote:
-      'I used Creda.ai for my resume and cover letter, and I got more interviews in a week than I did in a month before.',
   },
 ];
 
@@ -180,21 +155,44 @@ export default function Home() {
             className="absolute inset-0 -z-10 bg-primary/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
           />
           <div className="container mx-auto px-4 text-center">
-            <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+             <motion.h1
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="font-headline text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
+            >
               One platform. All tools.
               <br />
-              <span className="text-primary">Get hired faster with AI.</span>
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              <motion.span
+                initial={{ backgroundSize: '0% 100%' }}
+                animate={{ backgroundSize: '100% 100%' }}
+                transition={{ duration: 1, ease: 'easeInOut', delay: 0.5 }}
+                className="bg-gradient-to-r from-primary via-purple-500 to-accent bg-clip-text text-transparent"
+                style={{ backgroundRepeat: 'no-repeat' }}
+              >
+                Get hired faster with AI.
+              </motion.span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1 }}
+              className="mt-6 text-lg leading-8 text-muted-foreground"
+            >
               Build ATS-optimized resumes, craft perfect cover letters, and
               optimize your LinkedIn profile with our AI-powered career
               platform.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 1.2 }}
+              className="mt-10 flex items-center justify-center gap-x-6"
+            >
               <Link href="/signup">
                 <Button size="lg">Get Started</Button>
               </Link>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -228,7 +226,7 @@ export default function Home() {
                       {product.description}
                     </p>
                     <Link href={product.href} className="mt-4 inline-block">
-                        <Button variant="outline">Learn More <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                        <Button variant="outline">Get Started <ArrowRight className="ml-2 h-4 w-4" /></Button>
                     </Link>
                   </div>
                   <div className="md:w-1/2">
@@ -293,56 +291,11 @@ export default function Home() {
                            <Link href="/dashboard/resume-builder">
                             <Button size="sm">Edit as Resume</Button>
                            </Link>
-                           <Link href="/dashboard/cv-builder">
+                           <Link href="/dashboard/resume-builder">
                             <Button size="sm" variant="secondary">Edit as CV</Button>
                            </Link>
                         </div>
                       </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
-            </Carousel>
-          </div>
-        </section>
-
-        <section id="testimonials" className="py-24 sm:py-32">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-                Loved by professionals worldwide
-              </h2>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Don&apos;t just take our word for it. Hear from users who have
-                transformed their careers with Creda.ai.
-              </p>
-            </div>
-            <Carousel
-              opts={{
-                align: 'start',
-                loop: true,
-              }}
-              className="w-full mt-16"
-            >
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-4">
-                      <Card className="h-full">
-                        <CardContent className="p-6 flex flex-col justify-center items-center text-center">
-                          <p className="text-muted-foreground">
-                            &quot;{testimonial.quote}&quot;
-                          </p>
-                          <div className="mt-6">
-                            <p className="font-semibold">{testimonial.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {testimonial.title}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
                     </div>
                   </CarouselItem>
                 ))}

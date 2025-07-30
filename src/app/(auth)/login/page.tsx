@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Logo } from '@/components/logo';
 
 export default function LoginPage() {
   return (
@@ -47,7 +48,7 @@ export default function LoginPage() {
             Login
           </Button>
           <Button variant="outline" className="w-full">
-            Login with Magic Link
+            Login with Google Email Account
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">

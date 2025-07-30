@@ -9,6 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   return (
@@ -42,7 +43,7 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
           <CardDescription>
-            Update your password here. Choose a strong one!
+            You can reset your password through your authenticated Google account.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

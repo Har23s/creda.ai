@@ -43,13 +43,18 @@ export default function SignupPage() {
             Create an account
           </Button>
           <Button variant="outline" className="w-full">
-            Sign up with Magic Link
+            Sign up with Google Email Account
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
           Already have an account?{' '}
           <Link href="/login" className="underline">
             Login
+          </Link>
+        </div>
+        <div className="mt-4 text-center text-sm">
+          <Link href="/" className="underline">
+            Back to Home
           </Link>
         </div>
       </CardContent>
