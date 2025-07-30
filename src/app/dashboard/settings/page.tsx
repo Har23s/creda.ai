@@ -9,12 +9,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
 
 export default function SettingsPage() {
   return (
     <div className="space-y-8">
-      <h1 className="font-headline text-3xl font-bold">Account Settings</h1>
+      <h1 className="font-headline text-3xl font-bold">Welcome back, Ada!</h1>
       <Card>
         <CardHeader>
           <CardTitle>Personal Information</CardTitle>
@@ -30,7 +29,7 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue="ada.lovelace@example.com" />
+              <Input id="email" type="email" defaultValue="ada.lovelace@example.com" disabled />
             </div>
           </div>
           <Button>Save Changes</Button>
@@ -47,19 +46,7 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input id="current-password" type="password" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input id="new-password" type="password" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input id="confirm-password" type="password" />
-            </div>
-          <Button>Update Password</Button>
+            <Button>Reset Password via Google</Button>
         </CardContent>
       </Card>
     </div>

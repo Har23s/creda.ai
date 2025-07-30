@@ -7,22 +7,23 @@ import { Logo } from '../logo';
 
 const footerLinks = {
   platform: [
-    { href: '#pricing', label: 'Pricing' },
+    { href: '/dashboard/billing', label: 'Pricing' },
     { href: '/login', label: 'Sign In' },
     { href: '/signup', label: 'Sign Up' },
   ],
-  products: [
+  services: [
     { href: '/dashboard/resume-builder', label: 'Resume Builder' },
+    { href: '/dashboard/cover-letter', label: 'Cover Letter Generator' },
     { href: '/dashboard/linkedin-optimizer', label: 'LinkedIn Optimizer' },
     { href: '/dashboard/my-jobs', label: 'MyJobs' },
   ],
   company: [
-    { href: '#about', label: 'About' },
-    { href: '#contact', label: 'Contact' },
+    { href: '#', label: 'About' },
+    { href: '#', label: 'Contact' },
   ],
   legal: [
-    { href: '#privacy', label: 'Privacy Policy' },
-    { href: '#terms', label: 'Terms of Service' },
+    { href: '#', label: 'Privacy Policy' },
+    { href: '#', label: 'Terms of Service' },
   ],
 };
 
@@ -70,9 +71,9 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="font-headline font-semibold">Products</h3>
+            <h3 className="font-headline font-semibold">Services</h3>
             <ul className="mt-4 space-y-2">
-              {footerLinks.products.map((link) => (
+              {footerLinks.services.map((link) => (
                 <li key={`${link.href}-${link.label}`}>
                   <Link
                     href={link.href}
@@ -138,5 +139,3 @@ export function Footer() {
     </footer>
   );
 }
-
-    

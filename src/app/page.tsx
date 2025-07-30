@@ -8,7 +8,6 @@ import {
   FileText,
   Linkedin,
   PenSquare,
-  ChevronDown,
 } from 'lucide-react';
 import {
   Accordion,
@@ -23,9 +22,9 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import {
   Carousel,
@@ -43,14 +42,14 @@ const products = [
     icon: <FileText className="h-8 w-8" />,
     title: 'Resume Builder',
     description:
-      'Create ATS-optimized resumes that get you noticed by recruiters.',
+      'Craft an ATS-optimized resume in minutes. Choose a template, fill in your details, and let our AI boost your visibility with industry-specific suggestions.',
     video_hint: 'resume builder interface',
     href: '/dashboard/resume-builder',
   },
   {
     icon: <PenSquare className="h-8 w-8" />,
-    title: 'Cover Letter',
-    description: 'Generate compelling cover letters tailored to each job application.',
+    title: 'Cover Letter Generator',
+    description: 'Generate compelling cover letters tailored to each job description. Customize tone, structure, and keywords for maximum impact.',
     video_hint: 'cover letter generation',
     href: '/dashboard/cover-letter'
   },
@@ -58,60 +57,52 @@ const products = [
     icon: <Linkedin className="h-8 w-8" />,
     title: 'LinkedIn Optimizer',
     description:
-      'Optimize your LinkedIn profile to attract more career opportunities.',
+      'Paste your LinkedIn profile and get instant, AI-driven insights on how to improve your visibility, structure, and recruiter appeal.',
     video_hint: 'linkedin profile optimization',
     href: '/dashboard/linkedin-optimizer',
   },
   {
     icon: <Briefcase className="h-8 w-8" />,
     title: 'MyJobs',
-    description: 'Discover relevant jobs and track your applications with ease.',
+    description: 'Search roles by job title, location, remote filter, and more. Scraped in real-time, paste JD into your resume builder and our AI will improve your match instantly.',
     video_hint: 'job search dashboard',
     href: '/dashboard/my-jobs',
   },
 ];
 
-const pricingPlans = [
+const testimonials = [
   {
-    name: 'Free',
-    price: '$0',
-    period: ' / month',
-    description: 'For getting started',
-    features: [
-      '1 Resume',
-      'Basic Templates',
-      'Limited AI Suggestions',
-      '10 Job Searches/day',
-    ],
-    cta: 'Get Started',
+    companyLogo: 'https://placehold.co/100x40.png',
+    companyLogoHint: 'company logo',
+    jobRole: 'Front-End Developer',
+    companyName: 'Amazon',
   },
-  {
-    name: 'Pro',
-    price: '$199',
-    period: ' one-time',
-    description: 'For your entire career',
-    features: [
-      'Unlimited Resumes & CVs',
-      'All Premium Templates',
-      'Full AI-Powered Suggestions',
-      'Unlimited Job Searches',
-      'LinkedIn Optimization',
-      'Cover Letter Generator',
-      'Priority Support',
-      'Early access to new features',
-    ],
-    cta: 'Get Lifetime Access',
+    {
+    companyLogo: 'https://placehold.co/100x40.png',
+    companyLogoHint: 'company logo',
+    jobRole: 'Product Manager',
+    companyName: 'Google',
   },
-];
+    {
+    companyLogo: 'https://placehold.co/100x40.png',
+    companyLogoHint: 'company logo',
+    jobRole: 'UX/UI Designer',
+    companyName: 'Figma',
+  },
+    {
+    companyLogo: 'https://placehold.co/100x40.png',
+    companyLogoHint: 'company logo',
+    jobRole: 'Backend Engineer',
+    companyName: 'Stripe',
+  },
+    {
+    companyLogo: 'https://placehold.co/100x40.png',
+    companyLogoHint: 'company logo',
+    jobRole: 'Data Scientist',
+    companyName: 'Netflix',
+  },
+]
 
-const templates = [
-  { name: 'Classic', hint: 'resume template' },
-  { name: 'Modern', hint: 'resume template' },
-  { name: 'Minimalist', hint: 'resume template' },
-  { name: 'Professional', hint: 'resume template' },
-  { name: 'Creative', hint: 'resume template' },
-  { name: 'Academic', hint: 'cv template' },
-];
 
 const faqs = [
   {
@@ -137,7 +128,7 @@ const faqs = [
   {
     question: 'Can I create a CV for academic purposes?',
     answer:
-      'Absolutely! Our CV builder is specifically designed for academic and research positions, with dedicated sections for publications, research experience, awards, and more.',
+      'Absolutely! Our platform is also designed for academic and research positions, with dedicated sections for publications, research experience, awards, and more.',
   },
 ];
 
@@ -150,9 +141,12 @@ export default function Home() {
           id="hero"
           className="relative overflow-hidden py-20 md:py-32"
         >
-          <div
+           <div
             aria-hidden="true"
-            className="absolute inset-0 -z-10 bg-primary/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+            className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-purple-500/5 to-accent/10 animate-[gradient-xy_10s_ease_infinite]"
+            style={{
+                backgroundSize: '200% 200%',
+            }}
           />
           <div className="container mx-auto px-4 text-center">
              <motion.h1
@@ -161,12 +155,12 @@ export default function Home() {
               transition={{ duration: 0.5, ease: 'easeOut' }}
               className="font-headline text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
             >
-              One platform. All tools.
+              <motion.span initial={{fontWeight: 400}} animate={{fontWeight: 700}} transition={{duration: 0.5, delay: 0.5}}>One</motion.span> platform. All tools.
               <br />
               <motion.span
                 initial={{ backgroundSize: '0% 100%' }}
                 animate={{ backgroundSize: '100% 100%' }}
-                transition={{ duration: 1, ease: 'easeInOut', delay: 0.5 }}
+                transition={{ duration: 1, ease: 'easeInOut', delay: 0.8 }}
                 className="bg-gradient-to-r from-primary via-purple-500 to-accent bg-clip-text text-transparent"
                 style={{ backgroundRepeat: 'no-repeat' }}
               >
@@ -176,7 +170,7 @@ export default function Home() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1 }}
+              transition={{ duration: 0.5, delay: 1.2 }}
               className="mt-6 text-lg leading-8 text-muted-foreground"
             >
               Build ATS-optimized resumes, craft perfect cover letters, and
@@ -186,11 +180,14 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.5, delay: 1.2 }}
+              transition={{ duration: 0.5, delay: 1.4 }}
               className="mt-10 flex items-center justify-center gap-x-6"
             >
               <Link href="/signup">
                 <Button size="lg">Get Started</Button>
+              </Link>
+              <Link href="#products">
+                <Button size="lg" variant="ghost">See How It Works <ArrowRight className="ml-2 h-4 w-4" /></Button>
               </Link>
             </motion.div>
           </div>
@@ -207,17 +204,26 @@ export default function Home() {
                 your job hunt.
               </p>
             </div>
-            <div className="mt-16 space-y-16">
+            <div className="mt-16 space-y-24">
               {products.map((product, index) => (
-                <div
+                <motion.div
                   key={product.title}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
                   className={`flex flex-col gap-8 md:flex-row md:items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
                 >
                   <div className="md:w-1/2">
                     <div className="flex items-center gap-4">
-                      <div className="rounded-lg bg-primary/10 p-3 text-primary">
+                      <motion.div
+                        initial={{scale: 0}}
+                        whileInView={{scale: 1}}
+                        transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                        viewport={{ once: true }}
+                        className="rounded-lg bg-primary/10 p-3 text-primary">
                         {product.icon}
-                      </div>
+                      </motion.div>
                       <h3 className="font-headline text-2xl font-semibold">
                         {product.title}
                       </h3>
@@ -226,7 +232,7 @@ export default function Home() {
                       {product.description}
                     </p>
                     <Link href={product.href} className="mt-4 inline-block">
-                        <Button variant="outline">Get Started <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                        <Button variant="outline">Try Now <ArrowRight className="ml-2 h-4 w-4" /></Button>
                     </Link>
                   </div>
                   <div className="md:w-1/2">
@@ -244,22 +250,18 @@ export default function Home() {
                        </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="templates" className="bg-primary/5 py-24 sm:py-32">
+        <section id="testimonials" className="bg-primary/5 py-24 sm:py-32">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-                Stunning Templates
+                Trusted by professionals at top companies
               </h2>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Choose from a variety of professionally designed templates that
-                are optimized for ATS.
-              </p>
             </div>
             <Carousel
               opts={{
@@ -269,34 +271,23 @@ export default function Home() {
               className="mt-12 w-full"
             >
               <CarouselContent>
-                {templates.map((template, index) => (
+                {testimonials.map((testimonial, index) => (
                   <CarouselItem
                     key={index}
-                    className="group relative basis-1/2 md:basis-1/3 lg:basis-1/4"
+                    className="group relative basis-1/2 md:basis-1/3 lg:basis-1/5"
                   >
-                    <div className="p-1">
+                    <Card className="flex h-full flex-col items-center justify-center p-6 text-center">
                       <Image
-                        src="https://placehold.co/300x400.png"
-                        alt={template.name}
-                        width={300}
-                        height={400}
-                        data-ai-hint={template.hint}
-                        className="rounded-lg border-2 border-transparent transition-all group-hover:border-primary group-hover:shadow-2xl"
+                        src={testimonial.companyLogo}
+                        alt={`${testimonial.companyName} logo`}
+                        width={100}
+                        height={40}
+                        data-ai-hint={testimonial.companyLogoHint}
+                        className="mb-4"
                       />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-black/60 p-4 opacity-0 transition-opacity group-hover:opacity-100">
-                        <h3 className="text-center font-bold text-white">
-                          {template.name}
-                        </h3>
-                         <div className="mt-4 flex flex-col gap-2">
-                           <Link href="/dashboard/resume-builder">
-                            <Button size="sm">Edit as Resume</Button>
-                           </Link>
-                           <Link href="/dashboard/resume-builder">
-                            <Button size="sm" variant="secondary">Edit as CV</Button>
-                           </Link>
-                        </div>
-                      </div>
-                    </div>
+                      <p className='font-semibold'>{testimonial.jobRole}</p>
+                      <p className='text-sm text-muted-foreground'>{testimonial.companyName}</p>
+                    </Card>
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -306,75 +297,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="pricing" className="bg-primary/5 py-24 sm:py-32">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-                Simple, transparent pricing
-              </h2>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Choose the plan that&apos;s right for you. Get started for free.
-              </p>
-            </div>
-            <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-2">
-              {pricingPlans.map((plan) => (
-                <Card
-                  key={plan.name}
-                  className={`flex flex-col ${plan.name === 'Pro' ? 'border-primary shadow-2xl' : ''}`}
-                >
-                  <CardHeader>
-                    <CardTitle className="font-headline text-2xl">
-                      {plan.name}
-                    </CardTitle>
-                    <CardDescription>{plan.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <div className="flex items-baseline gap-x-2">
-                      <span className="text-4xl font-bold tracking-tight">
-                        {plan.price}
-                      </span>
-                      <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
-                        {plan.period}
-                      </span>
-                    </div>
-                    <ul className="mt-8 space-y-3 text-sm leading-6 text-muted-foreground">
-                      {plan.features.map((feature) => (
-                        <li key={`${plan.name}-${feature}`} className="flex gap-x-3">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="h-6 w-5 flex-none text-primary"
-                          >
-                            <path d="M20 6 9 17l-5-5" />
-                          </svg>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardFooter>
-                    <Link href="/signup" className="w-full">
-                      <Button
-                        className="w-full"
-                        variant={plan.name === 'Pro' ? 'default' : 'outline'}
-                      >
-                        {plan.cta}
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-        
         <section id="faq" className="py-24 sm:py-32">
           <div className="container mx-auto max-w-3xl px-4">
             <div className="text-center">

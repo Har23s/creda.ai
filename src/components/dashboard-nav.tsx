@@ -44,7 +44,7 @@ export function DashboardNav() {
         <SidebarMenuItem key={link.href}>
           <Link href={link.href}>
             <SidebarMenuButton
-              isActive={pathname === link.href}
+              isActive={pathname.startsWith(link.href) && (link.href !== '/dashboard' || pathname === '/dashboard')}
               tooltip={link.label}
             >
               {link.icon}
@@ -60,7 +60,7 @@ export function DashboardNav() {
         <SidebarMenuItem key={link.href}>
           <Link href={link.href}>
             <SidebarMenuButton
-              isActive={pathname === link.href}
+              isActive={pathname.startsWith(link.href)}
               tooltip={link.label}
             >
               {link.icon}

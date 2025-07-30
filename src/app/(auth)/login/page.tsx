@@ -57,6 +57,11 @@ export default function LoginPage() {
             Sign up
           </Link>
         </div>
+        <div className="mt-4 text-center text-sm">
+          <Link href="/" className="underline">
+            Back to Home
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
