@@ -63,18 +63,6 @@ const products = [
 
 const testimonials = [
   {
-    companyLogo: 'https://logo.clearbit.com/amazon.com',
-    companyLogoHint: 'Amazon logo',
-    jobRole: 'Front-End Developer',
-    companyName: 'Amazon',
-  },
-    {
-    companyLogo: 'https://logo.clearbit.com/google.com',
-    companyLogoHint: 'Google logo',
-    jobRole: 'Product Manager',
-    companyName: 'Google',
-  },
-    {
     companyLogo: 'https://logo.clearbit.com/figma.com',
     companyLogoHint: 'Figma logo',
     jobRole: 'UX/UI Designer',
@@ -91,6 +79,18 @@ const testimonials = [
     companyLogoHint: 'Netflix logo',
     jobRole: 'Data Scientist',
     companyName: 'Netflix',
+  },
+      {
+    companyLogo: 'https://logo.clearbit.com/amazon.com',
+    companyLogoHint: 'Amazon logo',
+    jobRole: 'Front-End Developer',
+    companyName: 'Amazon',
+  },
+    {
+    companyLogo: 'https://logo.clearbit.com/google.com',
+    companyLogoHint: 'Google logo',
+    jobRole: 'Product Manager',
+    companyName: 'Google',
   },
 ]
 
@@ -264,7 +264,7 @@ export default function Home() {
                         width={100}
                         height={40}
                         data-ai-hint={testimonial.companyLogoHint}
-                        className="mb-4 object-contain"
+                        className="mb-4 h-10 object-contain"
                       />
                       <p className='font-semibold'>{testimonial.jobRole}</p>
                       <p className='text-sm text-muted-foreground'>{testimonial.companyName}</p>
