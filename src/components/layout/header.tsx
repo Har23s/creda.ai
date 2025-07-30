@@ -1,11 +1,13 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 
 const navLinks = [
-  { href: '#features', label: 'Features' },
+  { href: '#products', label: 'Products' },
+  { href: '#templates', label: 'Templates' },
   { href: '#pricing', label: 'Pricing' },
-  { href: '#testimonials', label: 'Testimonials' },
+  { href: '#faq', label: 'FAQs' },
 ];
 
 export function Header() {
@@ -36,3 +38,5 @@ export function Header() {
     </header>
   );
 }
+
+    

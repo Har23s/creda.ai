@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Twitter, Linkedin, Youtube, BotMessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -10,10 +11,15 @@ const footerLinks = {
     { href: '/login', label: 'Sign In' },
     { href: '/signup', label: 'Sign Up' },
   ],
+  products: [
+    { href: '/dashboard/resume-builder', label: 'Resume Builder' },
+    { href: '/dashboard/cv-builder', label: 'CV Builder' },
+    { href: '/dashboard/linkedin-optimizer', label: 'LinkedIn Optimizer' },
+    { href: '/dashboard/my-jobs', label: 'MyJobs' },
+  ],
   company: [
     { href: '#about', label: 'About' },
     { href: '#contact', label: 'Contact' },
-    { href: '#careers', label: 'Careers' },
   ],
   legal: [
     { href: '#privacy', label: 'Privacy Policy' },
@@ -53,7 +59,22 @@ export function Footer() {
             <h3 className="font-headline font-semibold">Platform</h3>
             <ul className="mt-4 space-y-2">
               {footerLinks.platform.map((link) => (
-                <li key={link.href}>
+                <li key={`${link.href}-${link.label}`}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-headline font-semibold">Products</h3>
+            <ul className="mt-4 space-y-2">
+              {footerLinks.products.map((link) => (
+                <li key={`${link.href}-${link.label}`}>
                   <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground"
@@ -118,3 +139,5 @@ export function Footer() {
     </footer>
   );
 }
+
+    

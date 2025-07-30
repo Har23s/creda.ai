@@ -1,3 +1,5 @@
+
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -5,11 +7,15 @@ import {
   Briefcase,
   FileText,
   Linkedin,
-  Mail,
   PenSquare,
-  Twitter,
-  Youtube,
+  ChevronDown,
 } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,24 +26,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
-const features = [
+const products = [
   {
     icon: <FileText className="h-8 w-8" />,
     title: 'Resume Builder',
     description:
       'Create ATS-optimized resumes that get you noticed by recruiters.',
     video_hint: 'resume builder interface',
+    href: '/dashboard/resume-builder',
   },
   {
     icon: <PenSquare className="h-8 w-8" />,
@@ -45,13 +52,7 @@ const features = [
     description:
       'Build professional academic CVs for research and teaching positions.',
     video_hint: 'cv builder interface',
-  },
-  {
-    icon: <Mail className="h-8 w-8" />,
-    title: 'Cover Letter',
-    description:
-      'Generate personalized cover letters that highlight your strengths.',
-    video_hint: 'cover letter generation',
+    href: '/dashboard/cv-builder',
   },
   {
     icon: <Linkedin className="h-8 w-8" />,
@@ -59,12 +60,14 @@ const features = [
     description:
       'Optimize your LinkedIn profile to attract more career opportunities.',
     video_hint: 'linkedin profile optimization',
+    href: '/dashboard/linkedin-optimizer',
   },
   {
     icon: <Briefcase className="h-8 w-8" />,
     title: 'MyJobs',
     description: 'Discover relevant jobs and track your applications with ease.',
     video_hint: 'job search dashboard',
+    href: '/dashboard/my-jobs',
   },
 ];
 
@@ -74,36 +77,30 @@ const testimonials = [
     title: 'Software Engineer',
     quote:
       "Creda.ai's resume builder helped me land my dream job at a FAANG company. The ATS score feature is a game-changer!",
-    avatar: 'https://placehold.co/100x100.png',
-    dataAiHint: 'woman smiling',
-    before: 'https://placehold.co/300x400.png',
-    beforeHint: 'resume old',
-    after: 'https://placehold.co/300x400.png',
-    afterHint: 'resume new',
   },
   {
     name: 'Michael B.',
     title: 'Product Manager',
     quote:
       'The LinkedIn optimizer gave me actionable feedback that significantly increased my profile views from recruiters. Highly recommended!',
-    avatar: 'https://placehold.co/100x100.png',
-    dataAiHint: 'man portrait',
-    before: 'https://placehold.co/300x400.png',
-    beforeHint: 'linkedin profile',
-    after: 'https://placehold.co/300x400.png',
-    afterHint: 'optimized linkedin',
   },
   {
     name: 'Jessica P.',
     title: 'UX Designer',
     quote:
       'As a designer, aesthetics matter. Creda.ai offers beautiful templates that are also functional and ATS-friendly.',
-    avatar: 'https://placehold.co/100x100.png',
-    dataAiHint: 'woman professional',
-    before: 'https://placehold.co/300x400.png',
-    beforeHint: 'design resume',
-    after: 'https://placehold.co/300x400.png',
-    afterHint: 'professional resume',
+  },
+  {
+    name: 'Chris G.',
+    title: 'Data Scientist',
+    quote:
+      'The AI suggestions for my resume were spot-on. It helped me highlight the right skills for the jobs I was targeting.',
+  },
+  {
+    name: 'Emily R.',
+    title: 'Marketing Manager',
+    quote:
+      'I used Creda.ai for my resume and cover letter, and I got more interviews in a week than I did in a month before.',
   },
 ];
 
@@ -123,9 +120,9 @@ const pricingPlans = [
   },
   {
     name: 'Pro',
-    price: '$15',
-    period: ' / month',
-    description: 'For power users',
+    price: '$199',
+    period: ' one-time',
+    description: 'For your entire career',
     features: [
       'Unlimited Resumes & CVs',
       'All Premium Templates',
@@ -133,20 +130,47 @@ const pricingPlans = [
       'Unlimited Job Searches',
       'LinkedIn Optimization',
       'Cover Letter Generator',
-    ],
-    cta: 'Subscribe',
-  },
-  {
-    name: 'Lifetime',
-    price: '$199',
-    period: ' one-time',
-    description: 'For your entire career',
-    features: [
-      'All Pro features, forever',
       'Priority Support',
       'Early access to new features',
     ],
     cta: 'Get Lifetime Access',
+  },
+];
+
+const templates = [
+  { name: 'Classic', hint: 'resume template' },
+  { name: 'Modern', hint: 'resume template' },
+  { name: 'Minimalist', hint: 'resume template' },
+  { name: 'Professional', hint: 'resume template' },
+  { name: 'Creative', hint: 'resume template' },
+  { name: 'Academic', hint: 'cv template' },
+];
+
+const faqs = [
+  {
+    question: 'What is Creda.ai?',
+    answer:
+      'Creda.ai is an AI-powered platform designed to help job seekers create ATS-optimized resumes, professional CVs, and compelling cover letters. We also offer tools to optimize your LinkedIn profile and discover relevant job opportunities.',
+  },
+  {
+    question: 'How does the AI resume optimization work?',
+    answer:
+      'Our AI analyzes your resume against the job description you provide. It identifies missing keywords, suggests improvements for your bullet points, and provides an ATS score to help you understand how well your resume matches the role.',
+  },
+  {
+    question: 'Can I use Creda.ai for free?',
+    answer:
+      'Yes, we offer a free plan that allows you to create one resume, access basic templates, and get limited AI suggestions. For unlimited access to all features, you can upgrade to our Pro plan.',
+  },
+  {
+    question: 'What is an ATS and why is it important?',
+    answer:
+      'An Applicant Tracking System (ATS) is a software application that enables the electronic handling of recruitment needs. Many companies use ATS to filter candidates based on keywords and formatting. Our platform helps you create resumes that are optimized to pass through these systems.',
+  },
+  {
+    question: 'Can I create a CV for academic purposes?',
+    answer:
+      'Absolutely! Our CV builder is specifically designed for academic and research positions, with dedicated sections for publications, research experience, awards, and more.',
   },
 ];
 
@@ -178,16 +202,11 @@ export default function Home() {
               <Link href="/signup">
                 <Button size="lg">Get Started</Button>
               </Link>
-              <Link href="#pricing">
-                <Button size="lg" variant="ghost">
-                  See Pricing <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
             </div>
           </div>
         </section>
 
-        <section id="features" className="py-24 sm:py-32">
+        <section id="products" className="py-24 sm:py-32">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
@@ -198,96 +217,102 @@ export default function Home() {
                 your job hunt.
               </p>
             </div>
-            <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature, index) => (
-                <Card
-                  key={index}
-                  className="group transform-gpu transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            <div className="mt-16 space-y-16">
+              {products.map((product, index) => (
+                <div
+                  key={product.title}
+                  className={`flex flex-col gap-8 md:flex-row md:items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
                 >
-                  <CardHeader className="flex flex-row items-center gap-4">
-                    <div className="rounded-lg bg-primary/10 p-3 text-primary">
-                      {feature.icon}
+                  <div className="md:w-1/2">
+                    <div className="flex items-center gap-4">
+                      <div className="rounded-lg bg-primary/10 p-3 text-primary">
+                        {product.icon}
+                      </div>
+                      <h3 className="font-headline text-2xl font-semibold">
+                        {product.title}
+                      </h3>
                     </div>
-                    <CardTitle className="font-headline text-xl">
-                      {feature.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      {feature.description}
+                    <p className="mt-4 text-muted-foreground">
+                      {product.description}
                     </p>
-                    <div className="mt-4 overflow-hidden rounded-lg">
+                    <Link href={product.href} className="mt-4 inline-block">
+                        <Button variant="outline">Learn More <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                    </Link>
+                  </div>
+                  <div className="md:w-1/2">
+                    <div className="group relative aspect-video overflow-hidden rounded-lg">
                       <Image
-                        src="https://placehold.co/600x400.png"
-                        alt={`${feature.title} demonstration`}
-                        width={600}
-                        height={400}
-                        data-ai-hint={feature.video_hint}
+                        src="https://placehold.co/800x450.png"
+                        alt={`${product.title} demonstration`}
+                        width={800}
+                        height={450}
+                        data-ai-hint={product.video_hint}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
+                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                         <p className="text-white font-bold text-lg">See how it works</p>
+                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="guide" className="bg-primary/5 py-24 sm:py-32">
+        <section id="templates" className="bg-primary/5 py-24 sm:py-32">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-                How It Works
+                Stunning Templates
               </h2>
               <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                An interactive guide to our core features. Hover to see them in
-                action.
+                Choose from a variety of professionally designed templates that
+                are optimized for ATS.
               </p>
             </div>
-            <Tabs defaultValue="resume" className="mt-12 w-full">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
-                {features.map((feature) => (
-                  <TabsTrigger
-                    key={feature.title}
-                    value={feature.title.toLowerCase().replace(' ', '-')}
+            <Carousel
+              opts={{
+                align: 'start',
+                loop: true,
+              }}
+              className="mt-12 w-full"
+            >
+              <CarouselContent>
+                {templates.map((template, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="group relative basis-1/2 md:basis-1/3 lg:basis-1/4"
                   >
-                    {feature.title}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {features.map((feature) => (
-                <TabsContent
-                  key={feature.title}
-                  value={feature.title.toLowerCase().replace(' ', '-')}
-                  className="mt-8"
-                >
-                  <Card className="overflow-hidden">
-                    <div className="grid grid-cols-1 md:grid-cols-2">
-                      <div className="p-8">
-                        <h3 className="font-headline text-2xl font-semibold">
-                          {feature.title}
+                    <div className="p-1">
+                      <Image
+                        src="https://placehold.co/300x400.png"
+                        alt={template.name}
+                        width={300}
+                        height={400}
+                        data-ai-hint={template.hint}
+                        className="rounded-lg border-2 border-transparent transition-all group-hover:border-primary group-hover:shadow-2xl"
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-black/60 p-4 opacity-0 transition-opacity group-hover:opacity-100">
+                        <h3 className="text-center font-bold text-white">
+                          {template.name}
                         </h3>
-                        <p className="mt-4 text-muted-foreground">
-                          {feature.description} Learn how to use our powerful AI
-                          to craft the perfect application materials and find
-                          your dream job. This is a brief summary of how this amazing feature will change your life.
-                        </p>
-                      </div>
-                      <div className="group relative h-64 md:h-full">
-                        <Image
-                          src="https://placehold.co/800x600.png"
-                          alt={`${feature.title} in action`}
-                          layout="fill"
-                          objectFit="cover"
-                          data-ai-hint={`${feature.video_hint} screencast`}
-                          className="transition-transform duration-500 group-hover:scale-105"
-                        />
+                         <div className="mt-4 flex flex-col gap-2">
+                           <Link href="/dashboard/resume-builder">
+                            <Button size="sm">Edit as Resume</Button>
+                           </Link>
+                           <Link href="/dashboard/cv-builder">
+                            <Button size="sm" variant="secondary">Edit as CV</Button>
+                           </Link>
+                        </div>
                       </div>
                     </div>
-                  </Card>
-                </TabsContent>
-              ))}
-            </Tabs>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
           </div>
         </section>
 
@@ -302,59 +327,37 @@ export default function Home() {
                 transformed their careers with Creda.ai.
               </p>
             </div>
-            <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
-              {testimonials.map((testimonial) => (
-                <Card key={testimonial.name} className="flex flex-col">
-                  <CardContent className="flex-1 p-6">
-                    <p className="text-muted-foreground">
-                      &quot;{testimonial.quote}&quot;
-                    </p>
-                    <div className="mt-6 flex items-center gap-4">
-                      <Avatar>
-                        <AvatarImage
-                          src={testimonial.avatar}
-                          alt={testimonial.name}
-                          data-ai-hint={testimonial.dataAiHint}
-                        />
-                        <AvatarFallback>
-                          {testimonial.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold">{testimonial.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.title}
-                        </p>
-                      </div>
+            <Carousel
+              opts={{
+                align: 'start',
+                loop: true,
+              }}
+              className="w-full mt-16"
+            >
+              <CarouselContent>
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-4">
+                      <Card className="h-full">
+                        <CardContent className="p-6 flex flex-col justify-center items-center text-center">
+                          <p className="text-muted-foreground">
+                            &quot;{testimonial.quote}&quot;
+                          </p>
+                          <div className="mt-6">
+                            <p className="font-semibold">{testimonial.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {testimonial.title}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
-                  </CardContent>
-                  <CardFooter className="flex gap-4 bg-muted/50 p-4">
-                    <div className="flex-1 text-center">
-                      <p className="text-sm font-medium">Before</p>
-                      <Image
-                        src={testimonial.before}
-                        alt="Before using Creda.ai"
-                        width={150}
-                        height={200}
-                        data-ai-hint={testimonial.beforeHint}
-                        className="mt-2 mx-auto rounded-md border"
-                      />
-                    </div>
-                    <div className="flex-1 text-center">
-                      <p className="text-sm font-medium">After</p>
-                      <Image
-                        src={testimonial.after}
-                        alt="After using Creda.ai"
-                        width={150}
-                        height={200}
-                        data-ai-hint={testimonial.afterHint}
-                        className="mt-2 mx-auto rounded-md border"
-                      />
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
           </div>
         </section>
 
@@ -368,7 +371,7 @@ export default function Home() {
                 Choose the plan that&apos;s right for you. Get started for free.
               </p>
             </div>
-            <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
+            <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-2">
               {pricingPlans.map((plan) => (
                 <Card
                   key={plan.name}
@@ -424,6 +427,31 @@ export default function Home() {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+        
+        <section id="faq" className="py-24 sm:py-32">
+          <div className="container mx-auto max-w-3xl px-4">
+            <div className="text-center">
+              <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+                Frequently Asked Questions
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-muted-foreground">
+                Have questions? We have answers.
+              </p>
+            </div>
+            <Accordion type="single" collapsible className="mt-12 w-full">
+              {faqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger className="text-left font-semibold">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </section>
       </main>
