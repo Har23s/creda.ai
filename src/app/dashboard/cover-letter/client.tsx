@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -10,6 +10,7 @@ import {
 } from '@/ai/flows/cover-letter-generation';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Card,
@@ -27,26 +28,47 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Loader2, Sparkles, Copy, Download } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Progress } from '@/components/ui/progress';
+import {
+  Sparkles,
+  Download,
+  Loader2,
+} from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
 const coverLetterSchema = z.object({
-  jobDescription: z.string().min(50, 'Job description is too short'),
-  tone: z.enum(['Formal', 'Confident', 'Direct']),
+  yourName: z.string().min(1, "Your name is required"),
   companyName: z.string().min(1, "Company name is required"),
   hiringManager: z.string().optional(),
-  yourName: z.string().min(1, "Your name is required"),
+  letterBody: z.string().min(50, 'Cover letter body is too short'),
 });
 
 type CoverLetterValues = z.infer<typeof coverLetterSchema>;
+
+const defaultValues: CoverLetterValues = {
+    yourName: 'Ada Lovelace',
+    companyName: 'Tech Innovations Inc.',
+    hiringManager: 'Mr. Charles Babbage',
+    letterBody: `Dear Mr. Babbage,
+
+I am writing to express my keen interest in the Software Engineer position at Tech Innovations Inc., which I discovered on your company's career page. With my extensive background in developing and scaling complex web applications, I am confident that I possess the skills and experience necessary to be a valuable asset to your team.
+
+In my previous role, I led the development of a microservices architecture that resulted in a 40% improvement in system scalability. I am proficient in TypeScript, React, and Node.js and am passionate about writing clean, efficient code.
+
+I am eager to learn more about this opportunity and discuss how my qualifications can benefit your organization. Thank you for your time and consideration.
+
+Sincerely,
+Ada Lovelace`
+};
 
 const templates = [
   { name: 'Classic', thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
@@ -56,36 +78,48 @@ const templates = [
 ];
 
 export function CoverLetterClient() {
-  const [generatedLetter, setGeneratedLetter] = useState('');
+  const [jobDescription, setJobDescription] = useState('');
+  const [aiResult, setAiResult] = useState<CoverLetterOutput | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<CoverLetterValues>({
     resolver: zodResolver(coverLetterSchema),
-    defaultValues: {
-      jobDescription: '',
-      tone: 'Confident',
-      companyName: '',
-      hiringManager: '',
-      yourName: '',
-    },
+    defaultValues,
+    mode: 'onChange',
   });
 
-  const onSubmit = async (data: CoverLetterValues) => {
-    setIsLoading(true);
-    setGeneratedLetter('');
-    try {
-      const result: CoverLetterOutput = await generateCoverLetter(data);
-      setGeneratedLetter(result.coverLetter);
+  const coverLetterText = JSON.stringify(form.getValues(), null, 2);
+
+  const handleImproveWithAI = async () => {
+    if (!jobDescription) {
       toast({
-        title: 'Cover Letter Generated!',
-        description: 'Your personalized cover letter is ready.',
+        title: 'Job Description Missing',
+        description: 'Please paste a job description to get AI suggestions.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    setIsLoading(true);
+    setAiResult(null);
+    try {
+      const result = await generateCoverLetter({
+        coverLetterText,
+        jobDescription,
+      });
+      setAiResult(result);
+      form.setValue('letterBody', JSON.parse(result.optimizedCoverLetter).letterBody, { shouldValidate: true });
+      toast({
+        title: 'Cover Letter Improved!',
+        description: 'AI suggestions have been applied.',
       });
     } catch (error) {
-      console.error('Cover letter generation failed:', error);
+      console.error('AI optimization failed:', error);
       toast({
         title: 'Error',
-        description: 'Failed to generate cover letter. Please try again.',
+        description: 'Failed to get AI suggestions. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -93,149 +127,108 @@ export function CoverLetterClient() {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedLetter);
-    toast({ title: 'Copied to clipboard!' });
-  };
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-2">
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">
-              Cover Letter Generator
-            </CardTitle>
-            <CardDescription>
-              Generate a personalized cover letter in seconds.
-            </CardDescription>
+             <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="font-headline text-2xl">
+                  Cover Letter Generator
+                </CardTitle>
+                <CardDescription>
+                  Craft a compelling cover letter for your job application.
+                </CardDescription>
+              </div>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline">
+                    <Sparkles className="mr-2 h-4 w-4" /> Improve with AI
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="w-full sm:max-w-lg">
+                  <SheetHeader>
+                    <SheetTitle>Improve based on Job Description</SheetTitle>
+                    <SheetDescription>
+                      Paste a job description and our AI will suggest keywords
+                      and rephrase sentences to optimize your cover letter.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid gap-4 py-4">
+                    <Textarea
+                      placeholder="Paste job description here..."
+                      className="min-h-[200px]"
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                    />
+                    <Button onClick={handleImproveWithAI} disabled={isLoading}>
+                      {isLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Sparkles className="mr-2 h-4 w-4" />
+                      )}
+                      Generate Suggestions
+                    </Button>
+                  </div>
+                  {aiResult && (
+                    <div>
+                      <h3 className="font-semibold">AI Suggestions</h3>
+                      <Progress value={aiResult.matchScore} className="my-2" />
+                      <p className="text-sm text-muted-foreground">
+                        Match Score: {aiResult.matchScore}%
+                      </p>
+                      <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">
+                        {aiResult.suggestions.map((s, i) => (
+                          <li key={i}>{s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </SheetContent>
+              </Sheet>
+            </div>
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="jobDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Job Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Paste the full job description here..."
-                          rows={12}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="yourName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your Name</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter your name"
-                          rows={1}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="companyName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company Name</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter the company name"
-                          rows={1}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="hiringManager"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Hiring Manager (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter the hiring manager's name"
-                          rows={1}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="tone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Select Tone</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a tone" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Formal">Formal</SelectItem>
-                          <SelectItem value="Confident">Confident</SelectItem>
-                          <SelectItem value="Direct">Direct</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="mr-2 h-4 w-4" />
-                  )}
-                  Generate Cover Letter
-                </Button>
-                 <Separator />
-
-                <h3 className="font-headline text-lg font-semibold">Generated Letter</h3>
-                 <Textarea
-                    value={generatedLetter}
-                    onChange={(e) => setGeneratedLetter(e.target.value)}
-                    rows={20}
-                    placeholder="Your generated cover letter will appear here..."
-                    className="h-full"
-                  />
-                  <div className="mt-4 flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={copyToClipboard}
-                      disabled={!generatedLetter}
-                    >
-                      <Copy className="mr-2 h-4 w-4" /> Copy
-                    </Button>
-                    <Button variant="outline" disabled={!generatedLetter}>
-                      <Download className="mr-2 h-4 w-4" /> Download PDF
-                    </Button>
+              <form className="space-y-8">
+                 <div className="space-y-4">
+                  <h3 className="font-headline text-lg font-semibold">
+                    Recipient & Your Details
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <FormField name="yourName" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Your Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
+                    <FormField name="companyName" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
+                     <FormField name="hiringManager" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Hiring Manager (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
                   </div>
+                </div>
+
+                <Separator />
+                
+                <FormField
+                  control={form.control}
+                  name="letterBody"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-headline text-lg font-semibold">Cover Letter Body</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Write your cover letter here..."
+                          rows={20}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </form>
             </Form>
           </CardContent>
@@ -268,8 +261,8 @@ export function CoverLetterClient() {
                 ))}
               </div>
               <Separator />
-              <div className="aspect-[8.5/11] w-full rounded-md border bg-white p-4 shadow-sm">
-                 <p className="text-xs text-gray-800">{generatedLetter || "Your generated cover letter preview will appear here."}</p>
+              <div className="aspect-[8.5/11] w-full rounded-md border bg-white p-4 shadow-sm overflow-auto">
+                 <p className="text-xs text-gray-800 whitespace-pre-wrap">{form.watch('letterBody')}</p>
               </div>
             </div>
           </CardContent>
