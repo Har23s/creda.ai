@@ -89,8 +89,6 @@ export function CoverLetterClient() {
     mode: 'onChange',
   });
 
-  const coverLetterText = JSON.stringify(form.getValues(), null, 2);
-
   const handleImproveWithAI = async () => {
     if (!jobDescription) {
       toast({
@@ -103,12 +101,25 @@ export function CoverLetterClient() {
     setIsLoading(true);
     setAiResult(null);
     try {
+      const coverLetterText = JSON.stringify(form.getValues());
       const result = await generateCoverLetter({
         coverLetterText,
         jobDescription,
       });
       setAiResult(result);
-      form.setValue('letterBody', JSON.parse(result.optimizedCoverLetter).letterBody, { shouldValidate: true });
+      if (result.optimizedCoverLetter) {
+        try {
+            const updatedValues = JSON.parse(result.optimizedCoverLetter);
+            form.setValue('letterBody', updatedValues.letterBody, { shouldValidate: true });
+        } catch(e) {
+            console.error("Failed to parse optimized cover letter", e);
+             toast({
+                title: 'Error updating letter',
+                description: 'The AI returned an invalid format. Please try again.',
+                variant: 'destructive',
+            });
+        }
+      }
       toast({
         title: 'Cover Letter Improved!',
         description: 'AI suggestions have been applied.',
@@ -285,7 +296,7 @@ export function CoverLetterClient() {
                       data-ai-hint={template.hint}
                       className="rounded-md border-2 border-transparent hover:border-primary"
                     />
-                    <p className="text-center text-sm mt-1">{template.name}</p>
+                    <p className="mt-1 text-center text-sm">{template.name}</p>
                   </div>
                 ))}
               </div>

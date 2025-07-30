@@ -17,14 +17,14 @@ const CoverLetterInputSchema = z.object({
     .describe('The job description for the position being applied for.'),
   coverLetterText: z
     .string()
-    .describe('The text content of the cover letter to be optimized.'),
+    .describe('The text content of the cover letter to be optimized, in JSON format.'),
 });
 export type CoverLetterInput = z.infer<typeof CoverLetterInputSchema>;
 
 const CoverLetterOutputSchema = z.object({
   optimizedCoverLetter: z
     .string()
-    .describe('The optimized cover letter text with suggested improvements.'),
+    .describe('The optimized cover letter text with suggested improvements, in JSON format.'),
   suggestions: z
     .array(z.string())
     .describe('List of specific suggestions made by the AI.'),
@@ -48,10 +48,10 @@ const prompt = ai.definePrompt({
   output: {schema: CoverLetterOutputSchema},
   prompt: `You are an expert career advisor specializing in cover letters.
 
-  Given a cover letter and a job description, analyze the cover letter for missing keywords, tone, and overall match with the job.
+  Given a cover letter (in JSON format) and a job description, analyze the cover letter for missing keywords, tone, and overall match with the job.
   Provide an optimized cover letter, a list of specific suggestions, and an estimated match score (out of 100).
 
-  Cover Letter:
+  Cover Letter (JSON):
   {{coverLetterText}}
 
   Job Description:
@@ -60,10 +60,10 @@ const prompt = ai.definePrompt({
   Optimize the cover letter to better match the job description.
   Follow these instructions:
   1. Ensure the tone is professional and confident.
-  2. Incorporate keywords from the job description naturally.
+  2. Incorporate keywords from the job description naturally into the letter body.
   3. Provide specific, actionable suggestions in the "suggestions" output field.
   4. Calculate the match score based on relevance, tone, and keyword alignment.
-  5. The optimizedCoverLetter should be a JSON string that can be parsed, with the same structure as the input coverLetterText.
+  5. The optimizedCoverLetter should be a JSON string that can be parsed, with the same structure as the input coverLetterText. Only modify the 'letterBody' field.
 
   Output format: JSON
   {
