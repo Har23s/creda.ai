@@ -11,13 +11,13 @@ const footerLinks = {
     { href: '/signup', label: 'Sign Up' },
   ],
   company: [
-    { href: '#', label: 'About' },
-    { href: '#', label: 'Contact' },
-    { href: '#', label: 'Careers' },
+    { href: '#about', label: 'About' },
+    { href: '#contact', label: 'Contact' },
+    { href: '#careers', label: 'Careers' },
   ],
   legal: [
-    { href: '#', label: 'Privacy Policy' },
-    { href: '#', label: 'Terms of Service' },
+    { href: '#privacy', label: 'Privacy Policy' },
+    { href: '#terms', label: 'Terms of Service' },
   ],
 };
 
@@ -68,7 +68,7 @@ export function Footer() {
             <h3 className="font-headline font-semibold">Company</h3>
             <ul className="mt-4 space-y-2">
               {footerLinks.company.map((link) => (
-                <li key={link.href}>
+                <li key={`${link.href}-${link.label}`}>
                   <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground"
@@ -83,7 +83,7 @@ export function Footer() {
             <h3 className="font-headline font-semibold">Legal</h3>
             <ul className="mt-4 space-y-2">
               {footerLinks.legal.map((link) => (
-                <li key={link.href}>
+                <li key={`${link.href}-${link.label}`}>
                   <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground"
