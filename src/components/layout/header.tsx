@@ -12,8 +12,6 @@ import { ChevronDown } from 'lucide-react';
 
 const serviceLinks = [
   { href: '/dashboard/resume-builder', label: 'Resume Builder' },
-  { href: '/dashboard/cover-letter', label: 'Cover Letter Generator' },
-  { href: '/dashboard/linkedin-optimizer', label: 'LinkedIn Optimizer' },
   { href: '/dashboard/my-jobs', label: 'MyJobs' },
 ];
 

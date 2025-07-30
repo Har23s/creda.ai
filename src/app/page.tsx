@@ -24,7 +24,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter
+  CardFooter,
 } from '@/components/ui/card';
 import {
   Carousel,
@@ -45,14 +45,6 @@ const products = [
       'Craft an ATS-optimized resume in minutes. Choose a template, fill in your details, and let our AI boost your visibility with industry-specific suggestions.',
     video_hint: 'resume builder interface',
     href: '/dashboard/resume-builder',
-  },
-  {
-    icon: <Linkedin className="h-8 w-8" />,
-    title: 'LinkedIn Optimizer',
-    description:
-      'Paste your LinkedIn profile and get instant, AI-driven insights on how to improve your visibility, structure, and recruiter appeal.',
-    video_hint: 'linkedin profile optimization',
-    href: '/dashboard/linkedin-optimizer',
   },
   {
     icon: <Briefcase className="h-8 w-8" />,
@@ -101,7 +93,7 @@ const faqs = [
   {
     question: 'What is Creda.ai?',
     answer:
-      'Creda.ai is an AI-powered platform designed to help job seekers create ATS-optimized resumes, professional CVs, and compelling cover letters. We also offer tools to optimize your LinkedIn profile and discover relevant job opportunities.',
+      'Creda.ai is an AI-powered platform designed to help job seekers create ATS-optimized resumes and professional CVs. We also offer tools to discover relevant job opportunities.',
   },
   {
     question: 'How does the AI resume optimization work?',
@@ -111,7 +103,7 @@ const faqs = [
   {
     question: 'Can I use Creda.ai for free?',
     answer:
-      'Yes, we offer a free plan that allows you to create one resume, access basic templates, and get limited AI suggestions. For unlimited access to all features, you can upgrade to our Pro plan.',
+      'Yes, we offer a free plan that allows you to create one resume and access basic templates. For unlimited access to all features, you can upgrade to our Pro plan.',
   },
   {
     question: 'What is an ATS and why is it important?',
@@ -166,9 +158,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1.2 }}
               className="mt-6 text-lg leading-8 text-muted-foreground"
             >
-              Build ATS-optimized resumes, craft perfect cover letters, and
-              optimize your LinkedIn profile with our AI-powered career
-              platform.
+              Build ATS-optimized resumes and optimize your LinkedIn profile with our AI-powered career platform.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
