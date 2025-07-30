@@ -13,7 +13,6 @@ const footerLinks = {
   ],
   products: [
     { href: '/dashboard/resume-builder', label: 'Resume Builder' },
-    { href: '/dashboard/cv-builder', label: 'CV Builder' },
     { href: '/dashboard/linkedin-optimizer', label: 'LinkedIn Optimizer' },
     { href: '/dashboard/my-jobs', label: 'MyJobs' },
   ],

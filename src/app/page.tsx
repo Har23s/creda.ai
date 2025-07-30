@@ -47,14 +47,6 @@ const products = [
     href: '/dashboard/resume-builder',
   },
   {
-    icon: <PenSquare className="h-8 w-8" />,
-    title: 'CV Builder',
-    description:
-      'Build professional academic CVs for research and teaching positions.',
-    video_hint: 'cv builder interface',
-    href: '/dashboard/cv-builder',
-  },
-  {
     icon: <Linkedin className="h-8 w-8" />,
     title: 'LinkedIn Optimizer',
     description:
@@ -394,7 +386,7 @@ export default function Home() {
                     </div>
                     <ul className="mt-8 space-y-3 text-sm leading-6 text-muted-foreground">
                       {plan.features.map((feature) => (
-                        <li key={feature} className="flex gap-x-3">
+                        <li key={`${plan.name}-${feature}`} className="flex gap-x-3">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
