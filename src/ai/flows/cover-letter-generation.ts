@@ -16,6 +16,9 @@ const CoverLetterInputSchema = z.object({
     .string()
     .describe('The job description for the position being applied for.'),
   tone: z.enum(['Formal', 'Confident', 'Direct']).describe('The desired tone of the cover letter.'),
+  yourName: z.string().describe("The user's full name."),
+  companyName: z.string().describe('The name of the company being applied to.'),
+  hiringManager: z.string().optional().describe("The hiring manager's name, if known."),
 });
 export type CoverLetterInput = z.infer<typeof CoverLetterInputSchema>;
 
@@ -32,13 +35,17 @@ const prompt = ai.definePrompt({
   name: 'coverLetterPrompt',
   input: {schema: CoverLetterInputSchema},
   output: {schema: CoverLetterOutputSchema},
-  prompt: `You are an expert career advisor. Please generate a cover letter based on the following job description, with the specified tone.
+  prompt: `You are an expert career advisor. Please generate a professional cover letter based on the following information.
 
+My Name: {{{yourName}}}
+Company Name: {{{companyName}}}
+{{#if hiringManager}}
+Hiring Manager: {{{hiringManager}}}
+{{/if}}
 Job Description: {{{jobDescription}}}
-
 Tone: {{{tone}}}
 
-Cover Letter:`,
+Generate the cover letter now.`,
 });
 
 const generateCoverLetterFlow = ai.defineFlow(
