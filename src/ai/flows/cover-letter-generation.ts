@@ -12,9 +12,9 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateCoverLetterInputSchema = z.object({
-  coverLetterText: z
+  resumeText: z
     .string()
-    .describe('The text content of the cover letter to be generated.'),
+    .describe('The text content of the cover letter to be optimized.'),
   jobDescription: z
     .string()
     .describe('The job description to match the cover letter against.'),
@@ -22,11 +22,11 @@ const GenerateCoverLetterInputSchema = z.object({
 export type GenerateCoverLetterInput = z.infer<typeof GenerateCoverLetterInputSchema>;
 
 const GenerateCoverLetterOutputSchema = z.object({
-  optimizedCoverLetter: z
+  optimizedResume: z
     .string()
     .describe('The optimized cover letter text with suggested improvements.'),
   suggestions: z.array(z.string()).describe('List of specific suggestions made by the AI.'),
-  matchScore: z.number().describe('An estimated match score for the optimized cover letter.'),
+  atsScore: z.number().describe('An estimated ATS score for the optimized cover letter.'),
 });
 export type GenerateCoverLetterOutput = z.infer<typeof GenerateCoverLetterOutputSchema>;
 
@@ -44,7 +44,7 @@ const prompt = ai.definePrompt({
   Provide an optimized cover letter, a list of specific suggestions, and an estimated match score (out of 100).
 
   Cover Letter Draft:
-  {{coverLetterText}}
+  {{resumeText}}
 
   Job Description:
   {{jobDescription}}
@@ -54,14 +54,14 @@ const prompt = ai.definePrompt({
   1. Ensure that all important keywords from the job description are present in the cover letter.
   2. Rephrase sentences to be more impactful and align with the company's tone.
   3. Provide specific suggestions in the "suggestions" output field.
-  4. Calculate the match score based on the completeness and relevance of the cover letter content.
-  5. Return the full optimized cover letter as a JSON object string in the 'optimizedCoverLetter' field.
+  4. Calculate the match score based on the completeness and relevance of the cover letter content, and put it in the atsScore field.
+  5. Return the full optimized cover letter as a JSON object string in the 'optimizedResume' field.
 
   Output format: JSON
   {
-    "optimizedCoverLetter": "...",
+    "optimizedResume": "...",
     "suggestions": ["..."],
-    "matchScore": 0
+    "atsScore": 0
   }`,
 });
 

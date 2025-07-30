@@ -36,36 +36,72 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import {
-  Download,
-  Loader2,
+  Lightbulb,
   PlusCircle,
   Sparkles,
   Trash2,
+  Download,
+  FileImage,
+  Loader2,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
-const coverLetterSchema = z.object({
+const resumeSchema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
   email: z.string().email('Invalid email address'),
   phone: z.string().min(1, 'Phone number is required'),
-  companyName: z.string().min(1, 'Company name is required'),
-  hiringManager: z.string().optional(),
-  body: z.string().min(10, 'Body is too short'),
+  linkedin: z.string().url('Invalid URL').optional().or(z.literal('')),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  summary: z.string().min(10, 'Summary is too short'),
+  experience: z.array(
+    z.object({
+      title: z.string().min(1, 'Job title is required'),
+      company: z.string().min(1, 'Company name is required'),
+      dates: z.string().min(1, 'Dates are required'),
+      description: z.string().min(1, 'Description is required'),
+    })
+  ),
+  education: z.array(
+    z.object({
+      degree: z.string().min(1, 'Degree is required'),
+      school: z.string().min(1, 'School name is required'),
+      dates: z.string().min(1, 'Dates are required'),
+    })
+  ),
+  skills: z.string().min(1, 'Skills are required'),
 });
 
-type CoverLetterValues = z.infer<typeof coverLetterSchema>;
+type ResumeValues = z.infer<typeof resumeSchema>;
 
-const defaultValues: CoverLetterValues = {
+const defaultValues: ResumeValues = {
   fullName: 'Ada Lovelace',
   email: 'ada.lovelace@example.com',
   phone: '123-456-7890',
-  companyName: 'Tech Innovations Inc.',
-  hiringManager: 'Mr. Charles Babbage',
-  body:
+  linkedin: 'https://linkedin.com/in/ada-lovelace',
+  website: 'https://adalovelace.dev',
+  summary:
     'I am writing to express my keen interest in the Software Engineer position at Tech Innovations Inc., which I discovered on your company\'s career page. With my extensive background in developing and scaling complex web applications, I am confident that I possess the skills and experience necessary to be a valuable asset to your team. In my previous role, I led the development of a microservices architecture that resulted in a 40% improvement in system scalability. I am proficient in TypeScript, React, and Node.js and am passionate about writing clean, efficient code. I am eager to learn more about this opportunity and discuss how my qualifications can benefit your organization. Thank you for your time and consideration.',
+  experience: [
+    {
+      title: 'Senior Software Engineer',
+      company: 'Tech Solutions Inc.',
+      dates: 'Jan 2021 - Present',
+      description:
+        '- Led development of a new microservices architecture, improving system scalability by 40%.\n- Mentored junior engineers, fostering a culture of growth and knowledge sharing.',
+    },
+  ],
+  education: [
+    {
+      degree: 'B.Sc. in Computer Science',
+      school: 'University of Technology',
+      dates: '2014 - 2018',
+    },
+  ],
+  skills: 'TypeScript, React, Node.js, Next.js, GraphQL, PostgreSQL, Docker',
 };
 
 const templates = [
@@ -83,13 +119,30 @@ export function CoverLetterClient() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const form = useForm<CoverLetterValues>({
-    resolver: zodResolver(coverLetterSchema),
+  const form = useForm<ResumeValues>({
+    resolver: zodResolver(resumeSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const coverLetterText = JSON.stringify(form.getValues(), null, 2);
+  const {
+    fields: expFields,
+    append: appendExp,
+    remove: removeExp,
+  } = useFieldArray({
+    control: form.control,
+    name: 'experience',
+  });
+  const {
+    fields: eduFields,
+    append: appendEdu,
+    remove: removeEdu,
+  } = useFieldArray({
+    control: form.control,
+    name: 'education',
+  });
+
+  const resumeText = JSON.stringify(form.getValues(), null, 2);
 
   const handleImproveWithAI = async () => {
     if (!jobDescription) {
@@ -104,11 +157,11 @@ export function CoverLetterClient() {
     setAiResult(null);
     try {
       const result = await generateCoverLetter({
-        coverLetterText,
+        resumeText,
         jobDescription,
       });
       setAiResult(result);
-      form.setValue('body', JSON.parse(result.optimizedCoverLetter).body, { shouldValidate: true });
+      form.setValue('summary', JSON.parse(result.optimizedResume).summary, { shouldValidate: true });
       toast({
         title: 'Cover Letter Improved!',
         description: 'AI suggestions have been applied.',
@@ -150,7 +203,7 @@ export function CoverLetterClient() {
                     <SheetTitle>Improve based on Job Description</SheetTitle>
                     <SheetDescription>
                       Paste a job description and our AI will suggest keywords
-                      and rephrase sentences to optimize your cover letter.
+                      and rephrase bullet points to optimize your cover letter.
                     </SheetDescription>
                   </SheetHeader>
                   <div className="grid gap-4 py-4">
@@ -172,9 +225,9 @@ export function CoverLetterClient() {
                   {aiResult && (
                     <div>
                       <h3 className="font-semibold">AI Suggestions</h3>
-                      <Progress value={aiResult.matchScore} className="my-2" />
+                      <Progress value={aiResult.atsScore} className="my-2" />
                       <p className="text-sm text-muted-foreground">
-                        Match Score: {aiResult.matchScore}%
+                        Match Score: {aiResult.atsScore}%
                       </p>
                       <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">
                         {aiResult.suggestions.map((s, i) => (
@@ -204,35 +257,82 @@ export function CoverLetterClient() {
                     <FormField name="phone" control={form.control} render={({ field }) => (
                         <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )}/>
-                  </div>
-                </div>
-                
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="font-headline text-lg font-semibold">
-                    Recipient Details
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormField name="companyName" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Company Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
-                    <FormField name="hiringManager" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Hiring Manager (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormField name="linkedin" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>LinkedIn</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )}/>
                   </div>
                 </div>
 
                 <Separator />
 
-                <FormField name="body" control={form.control} render={({ field }) => (
+                <FormField name="summary" control={form.control} render={({ field }) => (
                     <FormItem>
                         <FormLabel className="font-headline text-lg font-semibold">Body</FormLabel>
-                        <FormControl><Textarea {...field} rows={15} /></FormControl>
+                        <FormControl><Textarea {...field} rows={5} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
+
+                <Separator />
                 
+                <div>
+                  <h3 className="font-headline text-lg font-semibold mb-4">Experience</h3>
+                  <div className="space-y-6">
+                    {expFields.map((field, index) => (
+                      <Card key={field.id} className="p-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                           <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
+                                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            )}/>
+                            <FormField name={`experience.${index}.company`} control={form.control} render={({ field }) => (
+                                <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            )}/>
+                        </div>
+                        <FormField name={`experience.${index}.dates`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )}/>
+                        <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl></FormItem>
+                        )}/>
+                        <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                      </Card>
+                    ))}
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => appendExp({ title: '', company: '', dates: '', description: '' })} className="mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Experience</Button>
+                </div>
+                
+                <Separator />
+
+                <div>
+                    <h3 className="font-headline text-lg font-semibold mb-4">Education</h3>
+                    <div className="space-y-6">
+                    {eduFields.map((field, index) => (
+                      <Card key={field.id} className="p-4">
+                        <FormField name={`education.${index}.school`} control={form.control} render={({ field }) => (
+                            <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )}/>
+                        <FormField name={`education.${index}.degree`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )}/>
+                        <FormField name={`education.${index}.dates`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )}/>
+                        <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                      </Card>
+                    ))}
+                    </div>
+                     <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
+                </div>
+                
+                <Separator />
+                
+                <FormField name="skills" control={form.control} render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="font-headline text-lg font-semibold">Skills</FormLabel>
+                        <FormControl><Textarea {...field} placeholder="e.g. JavaScript, React, Leadership" /></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}/>
               </form>
             </Form>
           </CardContent>
@@ -272,7 +372,9 @@ export function CoverLetterClient() {
                     <span>{form.watch('phone')}</span>
                 </div>
                 <hr className="my-2" />
-                <p className="text-xs text-gray-800 whitespace-pre-wrap">{form.watch('body')}</p>
+                <h3 className="text-sm font-bold text-black mt-2">Body</h3>
+                <p className="text-xs text-gray-800 whitespace-pre-wrap">{form.watch('summary')}</p>
+                {/* Simplified preview */}
               </div>
             </div>
           </CardContent>
