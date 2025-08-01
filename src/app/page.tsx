@@ -38,6 +38,13 @@ import { Footer } from '@/components/layout/footer';
 
 const products = [
   {
+    icon: <Briefcase className="h-8 w-8" />,
+    title: 'MyJobs',
+    description: 'Search roles by job title, location, remote filter, and more. Scraped in real-time, paste JD into your resume builder and our AI will improve your match instantly.',
+    video_hint: 'job search dashboard',
+    href: '/dashboard/my-jobs',
+  },
+  {
     icon: <FileText className="h-8 w-8" />,
     title: 'Resume Builder',
     description:
@@ -51,13 +58,6 @@ const products = [
     description: 'Generate compelling cover letters tailored to each job description. Customize tone, structure, and keywords for maximum impact.',
     video_hint: 'cover letter generator interface',
     href: '/dashboard/cover-letter',
-  },
-  {
-    icon: <Briefcase className="h-8 w-8" />,
-    title: 'MyJobs',
-    description: 'Search roles by job title, location, remote filter, and more. Scraped in real-time, paste JD into your resume builder and our AI will improve your match instantly.',
-    video_hint: 'job search dashboard',
-    href: '/dashboard/my-jobs',
   },
 ];
 
