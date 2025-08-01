@@ -11,7 +11,7 @@ export function WelcomeBanner({ userName, plan }: WelcomeBannerProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-headline text-2xl font-bold">
-            Welcome back, {userName}!
+            Welcome back, <span className="text-primary">{userName}</span>!
           </h2>
           <p className="text-muted-foreground">
             Let's make your next career move the best one yet.

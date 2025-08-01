@@ -1,8 +1,8 @@
 'use client';
 
 import { WelcomeBanner } from '@/components/dashboard/welcome-banner';
-import { ResumePanel } from '@/components/dashboard/resume-panel';
-import { ATSScoreChart } from '@/components/dashboard/ats-score-chart';
+import { RecentJobsPanel } from '@/components/dashboard/recent-jobs-panel';
+import { GitHubLinkedInPanel } from '@/components/dashboard/github-linkedin-panel';
 import { CoverLetterPanel } from '@/components/dashboard/cover-letter-panel';
 import { JobFeedPanel } from '@/components/dashboard/job-feed-panel';
 import { ChatAssistant } from '@/components/dashboard/chat-assistant';
@@ -46,8 +46,8 @@ export default function DashboardPage() {
       
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <motion.div className="lg:col-span-2 space-y-8" variants={itemVariants}>
-          <ResumePanel />
-          <ATSScoreChart />
+          <RecentJobsPanel />
+          <GitHubLinkedInPanel />
           <JobFeedPanel />
         </motion.div>
         <motion.div className="lg:col-span-1 space-y-8" variants={itemVariants}>
