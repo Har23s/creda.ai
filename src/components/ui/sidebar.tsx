@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, PanelLeftClose, PanelRight, PanelRightClose } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -34,6 +34,7 @@ type SidebarContext = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  side: "left" | "right"
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -53,6 +54,7 @@ const SidebarProvider = React.forwardRef<
     defaultOpen?: boolean
     open?: boolean
     onOpenChange?: (open: boolean) => void
+    side?: "left" | "right"
   }
 >(
   (
@@ -63,6 +65,7 @@ const SidebarProvider = React.forwardRef<
       className,
       style,
       children,
+      side = "left",
       ...props
     },
     ref
@@ -125,8 +128,9 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        side,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, side]
     )
 
     return (
@@ -263,7 +267,8 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, open, side } = useSidebar();
+  const Icon = side === 'left' ? (open ? PanelLeftClose : PanelLeft) : (open ? PanelRightClose : PanelRight);
 
   return (
     <Button
@@ -278,7 +283,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <Icon />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
