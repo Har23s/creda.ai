@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Briefcase,
   FileText,
-  Linkedin,
   PenSquare,
 } from 'lucide-react';
 import {
@@ -16,14 +15,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { motion } from 'framer-motion';
+import { TemplateGallery } from '@/components/template-gallery';
 
 import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardFooter,
   CardTitle,
 } from '@/components/ui/card';
 import { Header } from '@/components/layout/header';
@@ -34,7 +32,6 @@ const products = [
     icon: <Briefcase className="h-8 w-8" />,
     title: 'MyJobs',
     description: 'Search roles by job title, location, remote filter, and more. Scraped in real-time, paste JD into your resume builder and our AI will improve your match instantly.',
-    video_hint: 'job search dashboard',
     href: '/dashboard/my-jobs',
   },
   {
@@ -42,14 +39,12 @@ const products = [
     title: 'Resume Builder',
     description:
       'Craft an ATS-optimized resume in minutes. Choose a template, fill in your details, and let our AI boost your visibility with industry-specific suggestions.',
-    video_hint: 'resume builder interface',
     href: '/dashboard/resume-builder',
   },
   {
     icon: <PenSquare className="h-8 w-8" />,
     title: 'Cover Letter Generator',
     description: 'Generate compelling cover letters tailored to each job description. Customize tone, structure, and keywords for maximum impact.',
-    video_hint: 'cover letter generator interface',
     href: '/dashboard/cover-letter',
   },
 ];
@@ -91,6 +86,14 @@ const faqs = [
   },
 ];
 
+const resumeTemplates = Array.from({ length: 12 }, (_, i) => ({
+  id: i + 1,
+  name: `Template ${i + 1}`,
+  src: `https://placehold.co/300x424.png`,
+  hint: `resume template`,
+}));
+
+
 export default function Home() {
   const marqueeVariants = {
     animate: {
@@ -105,6 +108,20 @@ export default function Home() {
       },
     },
   };
+  
+  const templateMarqueeVariants = {
+     animate: {
+      x: [0, -1920], // Adjust based on number of items and their width
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: "loop",
+          duration: 40,
+          ease: "linear",
+        },
+      },
+    },
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -172,7 +189,7 @@ export default function Home() {
                 your job hunt.
               </p>
             </div>
-            <div className="mt-16 space-y-24">
+            <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {products.map((product, index) => (
                 <motion.div
                   key={product.title}
@@ -180,51 +197,70 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className={`flex flex-col gap-8 md:flex-row md:items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
                 >
-                  <div className="md:w-1/2">
-                    <div className="flex items-center gap-4">
-                      <motion.div
-                        initial={{scale: 0}}
-                        whileInView={{scale: 1}}
-                        transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-                        viewport={{ once: true }}
-                        className="rounded-lg bg-primary/10 p-3 text-primary">
+                  <Card className="flex h-full flex-col text-center">
+                    <CardHeader className="items-center">
+                      <div className="rounded-lg bg-primary/10 p-3 text-primary">
                         {product.icon}
-                      </motion.div>
-                      <h3 className="font-headline text-2xl font-semibold">
+                      </div>
+                      <CardTitle className="font-headline text-xl">
                         {product.title}
-                      </h3>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      <p className="text-muted-foreground">
+                        {product.description}
+                      </p>
+                    </CardContent>
+                     <div className="p-6 pt-0">
+                       <Link href={product.href}>
+                         <Button variant="outline">Try Now <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                       </Link>
                     </div>
-                    <p className="mt-4 text-muted-foreground">
-                      {product.description}
-                    </p>
-                    <Link href={product.href} className="mt-4 inline-block">
-                        <Button variant="outline">Try Now <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                    </Link>
-                  </div>
-                  <div className="md:w-1/2">
-                    <div className="group relative aspect-video overflow-hidden rounded-lg">
-                      <Image
-                        src="https://placehold.co/800x450.png"
-                        alt={`${product.title} demonstration`}
-                        width={800}
-                        height={450}
-                        data-ai-hint={product.video_hint}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                         <p className="text-white font-bold text-lg">See how it works</p>
-                       </div>
-                    </div>
-                  </div>
+                  </Card>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="testimonials" className="bg-primary/5 py-24 sm:py-32">
+        <section id="templates" className="bg-primary/5 py-24 sm:py-32 overflow-hidden">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+                10+ ATS-Optimized Templates
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-muted-foreground">
+                Choose a professionally designed template and get started in minutes.
+              </p>
+            </div>
+          </div>
+          <div className="relative mt-12 flex w-full overflow-hidden">
+            <motion.div
+                className="flex"
+                variants={templateMarqueeVariants}
+                animate="animate"
+            >
+                {[...resumeTemplates, ...resumeTemplates].map((template, index) => (
+                  <div key={index} className="flex-shrink-0 px-4" style={{width: '320px'}}>
+                      <Image
+                          src={template.src}
+                          alt={template.name}
+                          width={300}
+                          height={424}
+                          data-ai-hint={template.hint}
+                          className="rounded-lg shadow-lg transition-transform hover:scale-105"
+                      />
+                  </div>
+                ))}
+            </motion.div>
+          </div>
+          <div className="mt-12 text-center">
+            <TemplateGallery />
+          </div>
+        </section>
+
+        <section id="testimonials" className="py-24 sm:py-32">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
@@ -248,13 +284,13 @@ export default function Home() {
                   </div>
                 ))}
               </motion.div>
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-primary/5 to-transparent"></div>
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-primary/5 to-transparent"></div>
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background to-transparent"></div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background to-transparent"></div>
             </div>
           </div>
         </section>
 
-        <section id="faq" className="py-24 sm:py-32">
+        <section id="faq" className="bg-muted py-24 sm:py-32">
           <div className="container mx-auto max-w-3xl px-4">
             <div className="text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">

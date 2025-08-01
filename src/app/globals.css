@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,5 +96,9 @@ body {
     50% {
       background-position: 100% 50%;
     }
+  }
+
+  .bg-muted {
+    @apply bg-primary/5;
   }
 }
