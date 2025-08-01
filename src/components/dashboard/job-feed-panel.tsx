@@ -7,6 +7,9 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
+import { Button } from '../ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 const jobs = [
     {
@@ -54,7 +57,15 @@ export function JobFeedPanel() {
               <p className="font-semibold">{job.role}</p>
               <p className="text-sm text-muted-foreground">{job.company} &middot; {job.location}</p>
             </div>
-            <Badge variant="outline">{job.posted}</Badge>
+            <div className="flex flex-col items-end gap-2">
+                <Badge variant="outline">{job.posted}</Badge>
+                <Link href="/dashboard/my-jobs">
+                    <Button variant="secondary" size="sm">
+                        Apply Now
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                </Link>
+            </div>
           </div>
         ))}
       </CardContent>
