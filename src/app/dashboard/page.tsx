@@ -1,6 +1,5 @@
 'use client';
 
-import { WelcomeBanner } from '@/components/dashboard/welcome-banner';
 import { RecentJobsPanel } from '@/components/dashboard/recent-jobs-panel';
 import { SubscriptionCard } from '@/components/dashboard/subscription-card';
 import { WeeklyProgressTracker } from '@/components/dashboard/weekly-progress-tracker';
@@ -38,9 +37,14 @@ export default function DashboardPage() {
       animate="visible"
       variants={containerVariants}
     >
-      <motion.div variants={itemVariants}>
-        <WelcomeBanner userName="Ada" plan="Pro" />
-      </motion.div>
+      <div className="text-center">
+        <h1 className="font-headline text-3xl font-bold">
+            Welcome back, <span className="text-primary">Ada</span>!
+        </h1>
+        <p className="text-muted-foreground">
+            Let's make your next career move the best one yet.
+        </p>
+      </div>
       
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <motion.div className="lg:col-span-2 space-y-8" variants={itemVariants}>

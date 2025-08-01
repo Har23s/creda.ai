@@ -49,7 +49,6 @@ const profileSchema = z.object({
   primaryDomain: z.string().min(1, "Please select a career domain."),
   preferredRoles: z.array(z.string()).optional(), // Assuming this will be a tag input
   preferredLocations: z.array(z.string()).optional(),
-  isLookingForJob: z.boolean().default(true),
   openToRelocation: z.boolean().default(false),
   
   // Professional Background
@@ -76,7 +75,6 @@ const defaultValues: ProfileFormValues = {
   primaryDomain: 'IT',
   preferredRoles: ['Frontend Developer', 'React Engineer'],
   preferredLocations: ['London, UK', 'Remote'],
-  isLookingForJob: true,
   openToRelocation: false,
   experienceLevel: 'Mid',
   totalExperience: 3,
@@ -91,32 +89,13 @@ const defaultValues: ProfileFormValues = {
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const [completion, setCompletion] = useState(0);
-
+  
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues,
     mode: 'onChange',
   });
   
-  const formValues = form.watch();
-
-  useEffect(() => {
-    const totalFields = Object.keys(profileSchema.shape).filter(key => !profileSchema.shape[key as keyof typeof profileSchema.shape].isOptional());
-    let filledFields = 0;
-    
-    for (const key of totalFields) {
-      const value = formValues[key as keyof ProfileFormValues];
-      if (value && (!Array.isArray(value) || value.length > 0)) {
-        filledFields++;
-      }
-    }
-    
-    setCompletion(Math.round((filledFields / totalFields.length) * 100));
-
-  }, [formValues]);
-
-
   function onSubmit(data: ProfileFormValues) {
     toast({
       title: 'Profile Updated',
@@ -131,19 +110,6 @@ export default function SettingsPage() {
         <h1 className="font-headline text-3xl font-bold">Account Settings</h1>
         <p className="text-muted-foreground">Complete your profile to get the best AI-powered career recommendations.</p>
       </div>
-
-      <Card>
-          <CardHeader>
-              <CardTitle>Profile Completion</CardTitle>
-          </CardHeader>
-          <CardContent>
-             <div className="flex items-center gap-4">
-                <Progress value={completion} className="h-2 flex-1" />
-                <span className="text-lg font-bold text-primary">{completion}%</span>
-             </div>
-             <p className="text-sm mt-2 text-muted-foreground">Fill out all required fields to reach 100%.</p>
-          </CardContent>
-      </Card>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -202,7 +168,7 @@ export default function SettingsPage() {
                  <div className="flex items-center gap-3">
                     <Briefcase className="w-6 h-6 text-primary" />
                     <div>
-                        <CardTitle>Career Domain & Preferences</CardTitle>
+                        <CardTitle>Career Domain</CardTitle>
                         <CardDescription>Help us understand your career goals.</CardDescription>
                     </div>
                 </div>
@@ -265,12 +231,6 @@ export default function SettingsPage() {
                     )}/>
 
                     <div className="space-y-4">
-                        <FormField control={form.control} name="isLookingForJob" render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                                <FormLabel>Are you actively looking for a job?</FormLabel>
-                                <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                            </FormItem>
-                        )}/>
                         <FormField control={form.control} name="openToRelocation" render={({ field }) => (
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                                 <FormLabel>Are you open to relocation?</FormLabel>
@@ -302,12 +262,12 @@ export default function SettingsPage() {
                 <FormField control={form.control} name="skills" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Key Skills</FormLabel>
-                        <FormControl><Textarea placeholder="Comma-separated, e.g., React, Next.js, Figma" {...field} /></FormControl>
+                        <FormControl><Textarea placeholder="Comma-separated skills. Suggestions will appear based on your domain and title. e.g., React, Next.js, Figma" {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
                 <FormItem>
-                    <FormLabel>Resume</FormLabel>
+                    <FormLabel>Your Resume</FormLabel>
                     <FormControl>
                         <div className="flex items-center gap-4 rounded-md border p-3">
                            <FileText className="h-6 w-6 text-muted-foreground" />
@@ -318,6 +278,7 @@ export default function SettingsPage() {
                            <Button variant="outline" type="button"><Upload className="mr-2 h-4 w-4" /> Upload New</Button>
                         </div>
                     </FormControl>
+                    <FormMessage />
                 </FormItem>
             </CardContent>
           </Card>

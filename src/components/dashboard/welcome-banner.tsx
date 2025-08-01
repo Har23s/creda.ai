@@ -16,7 +16,8 @@ export function WelcomeBanner({ userName, plan }: WelcomeBannerProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Simulate progress loading
+    // Simulate progress loading based on profile data
+    // In a real app, this would be calculated based on user data
     const timer = setTimeout(() => setProgress(75), 500);
     return () => clearTimeout(timer);
   }, []);
@@ -35,20 +36,6 @@ export function WelcomeBanner({ userName, plan }: WelcomeBannerProps) {
         <Badge variant={plan === 'Pro' ? 'default' : 'secondary'} className="mt-2 sm:mt-0">
           {plan} Plan
         </Badge>
-      </div>
-      <div className="mt-4">
-        <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-medium text-muted-foreground">Profile Completion</p>
-            <p className="text-sm font-bold text-primary">{progress}%</p>
-        </div>
-        <Progress value={progress} className="h-2" />
-        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Link href="/dashboard/settings">
-                <Button size="sm">
-                    Complete Profile <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-            </Link>
-        </div>
       </div>
     </div>
   );

@@ -3,68 +3,72 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Check } from 'lucide-react';
+import { Check, X, Gift } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-const pricingPlan = {
-    name: 'Pro',
-    price: '$5',
-    period: ' one-time',
-    description: 'Unlock all tools for your entire career',
-    features: [
-      'Unlimited Resume Downloads',
-      'All Templates',
-      'LinkedIn Optimization',
-      'Real-time Job Scraping',
-      'Full AI-Powered Suggestions',
-      'Cover Letter Generator',
-      'Priority Support',
-    ],
-    cta: 'Unlock All Tools',
-};
+const features = [
+  { feature: 'Resume Builder', free: '🎁 1 Resume', pro: 'Unlimited Resumes', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+  { feature: 'Cover Letter Generator', free: '🎁 1 Cover Letter', pro: 'Unlimited Cover Letters', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+  { feature: 'AI-Powered Job Recommendations', free: '✅ Standard Matching', pro: '✅ Priority & Personalized Matching', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+  { feature: 'Live ATS Score While Typing', free: '❌', pro: '✅ See Score & Feedback Instantly', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+  { feature: 'JD-to-Resume Matching %', free: '❌', pro: '✅ Paste JD → Get Match Score & Suggestions', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+  { feature: 'Support', free: '❌', pro: '✅ Priority Support', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+  { feature: 'AI Features (Improvement & Suggestions)', free: '❌', pro: '✅ Fully Enabled (No chatbot)', proIcon: <Check className="h-5 w-5 text-green-500" /> },
+];
 
 export default function BillingPage() {
   return (
     <div className="space-y-8">
       <h1 className="font-headline text-3xl font-bold">Billing & Subscription</h1>
-      <div className="mx-auto mt-16 flex max-w-lg justify-center">
-        <Card className="flex w-full flex-col border-2 border-primary">
-            <CardHeader>
-              <CardTitle className="font-headline text-2xl">
-                {pricingPlan.name}
-              </CardTitle>
-              <CardDescription>{pricingPlan.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <div className="flex items-baseline gap-x-2">
-                <span className="text-4xl font-bold tracking-tight">
-                  {pricingPlan.price}
-                </span>
-                <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
-                  {pricingPlan.period}
-                </span>
-              </div>
-              <ul className="mt-8 space-y-3 text-sm leading-6 text-muted-foreground">
-                {pricingPlan.features.map((feature) => (
-                  <li key={feature} className="flex gap-x-3">
-                    <Check className="h-6 w-5 flex-none text-primary" />
-                    {feature}
-                  </li>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline text-2xl">Plans & Features</CardTitle>
+          <CardDescription>
+            Choose the plan that's right for you. Unlock your full potential with our Pro plan.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[40%]">Feature</TableHead>
+                  <TableHead className="text-center">Free</TableHead>
+                  <TableHead className="text-center border-l-2 border-primary/50 bg-primary/5 rounded-tr-lg">Pro+ ($5 / 6 months)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {features.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{item.feature}</TableCell>
+                    <TableCell className="text-center text-muted-foreground">{item.free}</TableCell>
+                    <TableCell className="text-center border-l-2 border-primary/50 bg-primary/5">
+                      <div className="flex items-center justify-center gap-2 font-semibold text-primary">
+                        {item.proIcon}
+                        <span>{item.pro}</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button
-                className="w-full"
-              >
-                {pricingPlan.cta}
-              </Button>
-            </CardFooter>
-          </Card>
-      </div>
+              </TableBody>
+            </Table>
+          </div>
+          <div className="mt-8 flex justify-end">
+             <Button size="lg">Upgrade to Pro+</Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
