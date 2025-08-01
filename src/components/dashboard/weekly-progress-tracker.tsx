@@ -11,9 +11,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { animate } from 'framer-motion';
-import { Briefcase, FilePenLine, CalendarCheck, Target, ArrowRight } from 'lucide-react';
+import { Briefcase, FilePenLine, CalendarCheck, Target, Eye, Handshake } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Separator } from '../ui/separator';
 
 const progressData = {
   jobsApplied: 4,
@@ -21,6 +22,11 @@ const progressData = {
   interviews: 1,
   goalTarget: 5,
 };
+
+const profilePerformanceData = {
+    searchAppearances: 4,
+    recruiterActions: 1,
+}
 
 function AnimatedNumber({ value }: { value: number }) {
   const [displayValue, setDisplayValue] = useState(0);
@@ -85,13 +91,28 @@ export function WeeklyProgressTracker() {
           </div>
           <Progress value={progressValue} />
         </div>
-
-        <Link href="/dashboard/my-jobs" className='w-full'>
-            <Button className="w-full">
-                View Suggested Jobs
-                <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-        </Link>
+        
+        <Separator />
+        
+        <div>
+            <h4 className="mb-3 text-sm font-semibold">Profile Performance</h4>
+            <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                    <p className="flex items-center gap-2 text-muted-foreground"><Eye className="h-4 w-4" /> Search Appearances</p>
+                    <div className="flex items-center gap-4">
+                        <span className="font-bold"><AnimatedNumber value={profilePerformanceData.searchAppearances} /></span>
+                        <Link href="#" className="text-xs text-primary hover:underline">View</Link>
+                    </div>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                    <p className="flex items-center gap-2 text-muted-foreground"><Handshake className="h-4 w-4" /> Recruiter Actions</p>
+                     <div className="flex items-center gap-4">
+                        <span className="font-bold"><AnimatedNumber value={profilePerformanceData.recruiterActions} /></span>
+                        <Link href="#" className="text-xs text-primary hover:underline">View</Link>
+                    </div>
+                </div>
+            </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -2,7 +2,6 @@
 
 import { WelcomeBanner } from '@/components/dashboard/welcome-banner';
 import { RecentJobsPanel } from '@/components/dashboard/recent-jobs-panel';
-import { JobFeedPanel } from '@/components/dashboard/job-feed-panel';
 import { SubscriptionCard } from '@/components/dashboard/subscription-card';
 import { SmartCareerInsights } from '@/components/dashboard/smart-career-insights';
 import { WeeklyProgressTracker } from '@/components/dashboard/weekly-progress-tracker';
@@ -46,7 +45,6 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <motion.div className="lg:col-span-2 space-y-8" variants={itemVariants}>
           <RecentJobsPanel />
-          <JobFeedPanel />
         </motion.div>
         <motion.div className="lg:col-span-1 space-y-8" variants={itemVariants}>
           <SubscriptionCard />
