@@ -4,6 +4,7 @@ import { Twitter, Linkedin, Youtube, BotMessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Logo } from '../logo';
+import { Textarea } from '../ui/textarea';
 
 const footerLinks = {
   platform: [
@@ -12,9 +13,9 @@ const footerLinks = {
     { href: '/signup', label: 'Sign Up' },
   ],
   services: [
+    { href: '/dashboard/my-jobs', label: 'MyJobs' },
     { href: '/dashboard/resume-builder', label: 'Resume Builder' },
     { href: '/dashboard/cover-letter', label: 'Cover Letter' },
-    { href: '/dashboard/my-jobs', label: 'MyJobs' },
   ],
   company: [
     { href: '#', label: 'About' },
@@ -117,18 +118,17 @@ export function Footer() {
         </div>
         <div className="md:col-span-1">
           <h3 className="font-headline font-semibold">
-            Subscribe to our newsletter
+            Contact Us
           </h3>
           <p className="mt-4 text-sm text-muted-foreground">
-            Get product updates and career tips.
+            Have feedback? We'd love to hear from you.
           </p>
-          <form className="mt-4 flex gap-2">
-            <Input
-              type="email"
-              placeholder="Enter your email"
+          <form className="mt-4 flex flex-col gap-2">
+            <Textarea
+              placeholder="Your message..."
               className="flex-1"
             />
-            <Button type="submit">Subscribe</Button>
+            <Button type="submit">Send Feedback</Button>
           </form>
         </div>
       </div>

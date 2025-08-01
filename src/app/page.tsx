@@ -26,13 +26,6 @@ import {
   CardFooter,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
@@ -61,37 +54,17 @@ const products = [
   },
 ];
 
-const testimonials = [
-  {
-    companyLogo: 'https://logo.clearbit.com/notion.so',
-    companyLogoHint: 'Notion logo',
-    companyName: 'Notion',
-  },
-  {
-    companyLogo: 'https://logo.clearbit.com/retool.com',
-    companyLogoHint: 'Retool logo',
-    companyName: 'Retool',
-  },
-  {
-    companyLogo: 'https://logo.clearbit.com/loom.com',
-    companyLogoHint: 'Loom logo',
-    companyName: 'Loom',
-  },
-  {
-    companyLogo: 'https://logo.clearbit.com/ramp.com',
-    companyLogoHint: 'Ramp logo',
-    companyName: 'Ramp',
-  },
-  {
-    companyLogo: 'https://logo.clearbit.com/brex.com',
-    companyLogoHint: 'Brex logo',
-    companyName: 'Brex',
-  },
-  {
-    companyLogo: 'https://logo.clearbit.com/zapier.com',
-    companyLogoHint: 'Zapier logo',
-    companyName: 'Zapier',
-  },
+const companies = [
+  'Google',
+  'Meta',
+  'Netflix',
+  'Vercel',
+  'Stripe',
+  'Notion',
+  'Figma',
+  'OpenAI',
+  'Microsoft',
+  'Apple',
 ];
 
 
@@ -119,6 +92,20 @@ const faqs = [
 ];
 
 export default function Home() {
+  const marqueeVariants = {
+    animate: {
+      x: [0, -1090],
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: 'loop',
+          duration: 15,
+          ease: 'linear',
+        },
+      },
+    },
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Header />
@@ -241,38 +228,29 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-                Trusted by professionals at top startups
+                Trusted by professionals at top companies
               </h2>
             </div>
-            <Carousel
-              opts={{
-                align: 'start',
-                loop: true,
-              }}
-              className="mt-12 w-full"
-            >
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem
+             <div className="relative mt-12 flex w-full overflow-hidden">
+              <motion.div
+                className="flex"
+                variants={marqueeVariants}
+                animate="animate"
+              >
+                {[...companies, ...companies].map((company, index) => (
+                  <div
                     key={index}
-                    className="group relative basis-1/2 md:basis-1/3 lg:basis-1/5"
+                    className="flex-shrink-0 px-8"
                   >
-                    <Card className="flex h-full flex-col items-center justify-center p-6 text-center">
-                      <Image
-                        src={testimonial.companyLogo}
-                        alt={`${testimonial.companyName} logo`}
-                        width={100}
-                        height={40}
-                        data-ai-hint={testimonial.companyLogoHint}
-                        className="mb-4 h-10 object-contain"
-                      />
-                    </Card>
-                  </CarouselItem>
+                    <span className="text-2xl font-semibold text-muted-foreground transition-colors hover:text-foreground">
+                      {company}
+                    </span>
+                  </div>
                 ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
-            </Carousel>
+              </motion.div>
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-primary/5 to-transparent"></div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-primary/5 to-transparent"></div>
+            </div>
           </div>
         </section>
 
