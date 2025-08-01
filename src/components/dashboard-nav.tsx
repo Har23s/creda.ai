@@ -4,14 +4,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  BarChart3,
   Briefcase,
   CreditCard,
   FileText,
   Home,
-  Linkedin,
   Mail,
-  PenSquare,
   Settings,
 } from 'lucide-react';
 
