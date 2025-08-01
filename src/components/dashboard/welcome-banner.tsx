@@ -1,4 +1,11 @@
+'use client';
+
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface WelcomeBannerProps {
   userName: string;
@@ -6,9 +13,17 @@ interface WelcomeBannerProps {
 }
 
 export function WelcomeBanner({ userName, plan }: WelcomeBannerProps) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    // Simulate progress loading
+    const timer = setTimeout(() => setProgress(75), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="group relative rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="font-headline text-2xl font-bold">
             Welcome back, <span className="text-primary">{userName}</span>!
@@ -17,11 +32,23 @@ export function WelcomeBanner({ userName, plan }: WelcomeBannerProps) {
             Let's make your next career move the best one yet.
           </p>
         </div>
-        <Badge variant={plan === 'Pro' ? 'default' : 'secondary'}>{plan} Plan</Badge>
+        <Badge variant={plan === 'Pro' ? 'default' : 'secondary'} className="mt-2 sm:mt-0">
+          {plan} Plan
+        </Badge>
       </div>
       <div className="mt-4">
-        <p className="text-sm text-muted-foreground">Profile Completion: 75%</p>
-        {/* Placeholder for progress bar */}
+        <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-muted-foreground">Profile Completion</p>
+            <p className="text-sm font-bold text-primary">{progress}%</p>
+        </div>
+        <Progress value={progress} className="h-2" />
+        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Link href="/dashboard/settings">
+                <Button size="sm">
+                    Complete Profile <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+            </Link>
+        </div>
       </div>
     </div>
   );
