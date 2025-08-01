@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -9,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { motion } from 'framer-motion';
+import { animate } from 'framer-motion';
 import { Briefcase, FilePenLine, CalendarCheck, Target, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -25,7 +26,7 @@ function AnimatedNumber({ value }: { value: number }) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    const controls = motion.animate(0, value, {
+    const controls = animate(0, value, {
       duration: 1,
       ease: "easeOut",
       onUpdate: (latest) => {
