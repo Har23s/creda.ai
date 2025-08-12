@@ -283,8 +283,7 @@ export function ResumeBuilderClient() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div className="order-2 md:order-1">
+    <div className="grid grid-cols-1">
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="print:hidden">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -518,15 +517,6 @@ export function ResumeBuilderClient() {
             </Button>
           </CardHeader>
         </Card>
-      </div>
-      <div className="order-1 md:order-2 print:hidden">
-        <div className="sticky top-8">
-            <h3 className="font-headline text-lg font-semibold mb-4">Live Preview</h3>
-            <div className="w-[300px] h-[424px] bg-white rounded-lg shadow-lg overflow-hidden">
-                <ResumePreview {...resumeData} />
-            </div>
-        </div>
-      </div>
     </div>
   );
 }

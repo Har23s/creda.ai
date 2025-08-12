@@ -211,8 +211,8 @@ export function CoverLetterClient() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-2 order-2 md:order-1">
+    <div className="grid grid-cols-1">
+      <div className="order-2 md:order-1">
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="print:hidden">
             <div className="flex items-center justify-between">
@@ -425,14 +425,6 @@ export function CoverLetterClient() {
             </Button>
           </CardHeader>
         </Card>
-      </div>
-      <div className="md:col-span-1 order-1 md:order-2 print:hidden">
-        <div className="sticky top-8">
-            <h3 className="font-headline text-lg font-semibold mb-4">Live Preview</h3>
-            <div className="w-[300px] h-[424px] bg-white rounded-lg shadow-lg overflow-hidden">
-                <ResumePreview {...resumeData} />
-            </div>
-        </div>
       </div>
     </div>
   );
