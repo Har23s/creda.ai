@@ -36,14 +36,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
 import {
-  Lightbulb,
   PlusCircle,
   Sparkles,
   Trash2,
   Download,
-  FileImage,
   Loader2,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -105,10 +102,10 @@ const defaultValues: ResumeValues = {
 };
 
 const templates = [
-  { name: 'Classic', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template' },
-  { name: 'Modern', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template' },
-  { name: 'Minimalist', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template' },
-  { name: 'Professional', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template' },
+  { name: 'Classic ATS', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template no photo' },
+  { name: 'Modern with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template with photo' },
+  { name: 'Minimalist Tech', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template minimal' },
+  { name: 'Professional with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template professional' },
 ];
 
 export function ResumeBuilderClient() {
@@ -177,12 +174,16 @@ export function ResumeBuilderClient() {
       setIsLoading(false);
     }
   };
+  
+  const handleDownload = () => {
+    window.print();
+  }
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-      <div className="lg:col-span-2">
-        <Card>
-          <CardHeader>
+      <div className="lg:col-span-2 print:col-span-3">
+        <Card className="print:shadow-none print:border-none">
+          <CardHeader className="print:hidden">
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="font-headline text-2xl">
@@ -279,7 +280,7 @@ export function ResumeBuilderClient() {
                   <h3 className="font-headline text-lg font-semibold mb-4">Experience</h3>
                   <div className="space-y-6">
                     {expFields.map((field, index) => (
-                      <Card key={field.id} className="p-4">
+                      <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                            <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
                                 <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
@@ -294,11 +295,11 @@ export function ResumeBuilderClient() {
                         <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
                             <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl></FormItem>
                         )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                        <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
                       </Card>
                     ))}
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => appendExp({ title: '', company: '', dates: '', description: '' })} className="mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Experience</Button>
+                  <Button variant="outline" size="sm" onClick={() => appendExp({ title: '', company: '', dates: '', description: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Experience</Button>
                 </div>
                 
                 <Separator />
@@ -307,7 +308,7 @@ export function ResumeBuilderClient() {
                     <h3 className="font-headline text-lg font-semibold mb-4">Education</h3>
                     <div className="space-y-6">
                     {eduFields.map((field, index) => (
-                      <Card key={field.id} className="p-4">
+                      <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <FormField name={`education.${index}.school`} control={form.control} render={({ field }) => (
                             <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
                         )}/>
@@ -317,11 +318,11 @@ export function ResumeBuilderClient() {
                         <FormField name={`education.${index}.dates`} control={form.control} render={({ field }) => (
                             <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
                         )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                        <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
                       </Card>
                     ))}
                     </div>
-                     <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
+                     <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
                 </div>
                 
                 <Separator />
@@ -339,7 +340,7 @@ export function ResumeBuilderClient() {
         </Card>
       </div>
 
-      <div className="lg:col-span-1">
+      <div className="lg:col-span-1 print:hidden">
         <Card className="sticky top-24">
           <CardHeader>
             <CardTitle className="font-headline">Preview & Templates</CardTitle>
@@ -379,7 +380,7 @@ export function ResumeBuilderClient() {
             </div>
           </CardContent>
           <CardHeader>
-             <Button className="w-full">
+             <Button className="w-full" onClick={handleDownload}>
               <Download className="mr-2 h-4 w-4" /> Download PDF
             </Button>
           </CardHeader>
