@@ -287,7 +287,7 @@ export function ResumeBuilderClient() {
       <div className="order-2 md:order-1">
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="print:hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
                 <CardTitle className="font-headline text-2xl">
                   Resume Builder
@@ -296,7 +296,7 @@ export function ResumeBuilderClient() {
                   Fill out the sections below or upload your resume to get started.
                 </CardDescription>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="outline">
@@ -530,5 +530,3 @@ export function ResumeBuilderClient() {
     </div>
   );
 }
-
-    
