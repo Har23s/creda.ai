@@ -426,7 +426,7 @@ export function ResumeBuilderClient() {
       <div className="md:col-span-1 order-1 md:order-2 print:hidden">
         <div className="sticky top-8">
             <h3 className="font-headline text-lg font-semibold mb-4">Live Preview</h3>
-            <div className="aspect-[8.5/11] w-full bg-white rounded-lg shadow-lg">
+            <div className="w-[300px] h-[424px] bg-white rounded-lg shadow-lg overflow-hidden">
                 <ResumePreview {...resumeData} />
             </div>
         </div>
