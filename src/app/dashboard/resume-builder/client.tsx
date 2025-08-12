@@ -69,6 +69,20 @@ const resumeSchema = z.object({
       dates: z.string().min(1, 'Dates are required'),
     })
   ),
+  projects: z.array(
+    z.object({
+      name: z.string().min(1, 'Project name is required'),
+      description: z.string().min(1, 'Description is required'),
+      url: z.string().url('Invalid URL').optional().or(z.literal('')),
+    })
+  ),
+  certificates: z.array(
+    z.object({
+      name: z.string().min(1, 'Certificate name is required'),
+      issuer: z.string().min(1, 'Issuer is required'),
+      date: z.string().min(1, 'Date is required'),
+    })
+  ),
   skills: z.string().min(1, 'Skills are required'),
 });
 
@@ -98,6 +112,8 @@ const defaultValues: ResumeValues = {
       dates: '2014 - 2018',
     },
   ],
+  projects: [],
+  certificates: [],
   skills: 'TypeScript, React, Node.js, Next.js, GraphQL, PostgreSQL, Docker',
 };
 
@@ -132,6 +148,22 @@ export function ResumeBuilderClient() {
   } = useFieldArray({
     control: form.control,
     name: 'education',
+  });
+  const {
+    fields: projectFields,
+    append: appendProject,
+    remove: removeProject,
+  } = useFieldArray({
+    control: form.control,
+    name: 'projects',
+  });
+  const {
+    fields: certFields,
+    append: appendCert,
+    remove: removeCert,
+  } = useFieldArray({
+    control: form.control,
+    name: 'certificates',
   });
 
   const resumeText = JSON.stringify(form.getValues(), null, 2);
@@ -278,17 +310,17 @@ export function ResumeBuilderClient() {
                       <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
-                                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                             )}/>
                             <FormField name={`experience.${index}.company`} control={form.control} render={({ field }) => (
-                                <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                                <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                             )}/>
                         </div>
                         <FormField name={`experience.${index}.dates`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )}/>
                         <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl></FormItem>
+                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
                         )}/>
                         <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
                       </Card>
@@ -305,19 +337,67 @@ export function ResumeBuilderClient() {
                     {eduFields.map((field, index) => (
                       <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <FormField name={`education.${index}.school`} control={form.control} render={({ field }) => (
-                            <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )}/>
                         <FormField name={`education.${index}.degree`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )}/>
                         <FormField name={`education.${index}.dates`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )}/>
                         <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
                       </Card>
                     ))}
                     </div>
                       <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
+                </div>
+                
+                <Separator />
+
+                <div>
+                  <h3 className="font-headline text-lg font-semibold mb-4">Projects</h3>
+                  <div className="space-y-6">
+                    {projectFields.map((field, index) => (
+                      <Card key={field.id} className="p-4 print:border-none print:shadow-none">
+                        <FormField name={`projects.${index}.name`} control={form.control} render={({ field }) => (
+                            <FormItem><FormLabel>Project Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )}/>
+                        <FormField name={`projects.${index}.description`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={3} /></FormControl><FormMessage /></FormItem>
+                        )}/>
+                         <FormField name={`projects.${index}.url`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Project URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )}/>
+                        <Button variant="destructive" size="sm" onClick={() => removeProject(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove Project</Button>
+                      </Card>
+                    ))}
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => appendProject({ name: '', description: '', url: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Project</Button>
+                </div>
+
+                <Separator />
+
+                 <div>
+                  <h3 className="font-headline text-lg font-semibold mb-4">Certificates</h3>
+                  <div className="space-y-6">
+                    {certFields.map((field, index) => (
+                      <Card key={field.id} className="p-4 print:border-none print:shadow-none">
+                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                           <FormField name={`certificates.${index}.name`} control={form.control} render={({ field }) => (
+                              <FormItem><FormLabel>Certificate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )}/>
+                          <FormField name={`certificates.${index}.issuer`} control={form.control} render={({ field }) => (
+                              <FormItem><FormLabel>Issuer</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )}/>
+                        </div>
+                         <FormField name={`certificates.${index}.date`} control={form.control} render={({ field }) => (
+                            <FormItem className="mt-4"><FormLabel>Date</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )}/>
+                        <Button variant="destructive" size="sm" onClick={() => removeCert(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove Certificate</Button>
+                      </Card>
+                    ))}
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => appendCert({ name: '', issuer: '', date: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Certificate</Button>
                 </div>
                 
                 <Separator />

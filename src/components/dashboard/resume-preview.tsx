@@ -12,6 +12,8 @@ export function ResumePreview(props: ResumeValues) {
         summary,
         experience,
         education,
+        projects,
+        certificates,
         skills,
     } = props;
     
@@ -51,6 +53,25 @@ export function ResumePreview(props: ResumeValues) {
                     ))}
                  </div>
             </section>
+            
+            {projects && projects.length > 0 && (
+              <section className="mt-6">
+                  <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Projects</h2>
+                  <div className="space-y-4">
+                      {projects.map((proj, index) => (
+                          <div key={index}>
+                              <div className="flex justify-between items-baseline">
+                                  <h3 className="font-bold text-base">{proj.name}</h3>
+                                  {proj.url && <a href={proj.url} className="text-xs text-blue-600" target="_blank" rel="noreferrer">Link</a>}
+                              </div>
+                              <div className="prose prose-sm mt-1 text-gray-700 whitespace-pre-wrap">
+                                  {proj.description}
+                              </div>
+                          </div>
+                      ))}
+                  </div>
+              </section>
+            )}
 
             <section className="mt-6">
                  <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Education</h2>
@@ -66,6 +87,23 @@ export function ResumePreview(props: ResumeValues) {
                     ))}
                  </div>
             </section>
+            
+            {certificates && certificates.length > 0 && (
+                <section className="mt-6">
+                    <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Certificates</h2>
+                    <div className="space-y-3">
+                        {certificates.map((cert, index) => (
+                            <div key={index}>
+                                <div className="flex justify-between items-baseline">
+                                    <h3 className="font-bold text-base">{cert.name}</h3>
+                                    <p className="text-xs text-gray-600">{cert.date}</p>
+                                </div>
+                                <p className="italic text-gray-800">{cert.issuer}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
             
             <section className="mt-6">
                  <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Skills</h2>
