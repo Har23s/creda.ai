@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -288,6 +289,9 @@ export function ResumeBuilderClient() {
                     <FormField name="linkedin" control={form.control} render={({ field }) => (
                         <FormItem><FormLabel>LinkedIn</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )}/>
+                     <FormField name="website" control={form.control} render={({ field }) => (
+                        <FormItem><FormLabel>Website</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )}/>
                   </div>
                 </div>
 
@@ -422,7 +426,7 @@ export function ResumeBuilderClient() {
       <div className="md:col-span-1 order-1 md:order-2 print:hidden">
         <div className="sticky top-8">
             <h3 className="font-headline text-lg font-semibold mb-4">Live Preview</h3>
-            <div className="aspect-[8.5/11] w-full">
+            <div className="aspect-[8.5/11] w-full bg-white rounded-lg shadow-lg">
                 <ResumePreview {...resumeData} />
             </div>
         </div>
