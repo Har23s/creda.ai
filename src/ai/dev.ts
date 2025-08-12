@@ -4,3 +4,4 @@ config();
 
 import '@/ai/flows/ats-resume-optimization.ts';
 import '@/ai/flows/cover-letter-generation.ts';
+import '@/ai/flows/resume-parsing.ts';

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,6 +9,10 @@ import {
   atsResumeOptimization,
   type AtsResumeOptimizationOutput,
 } from '@/ai/flows/ats-resume-optimization';
+import {
+  parseResume,
+  type ParseResumeOutput,
+} from '@/ai/flows/resume-parsing';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,6 +47,7 @@ import {
   Trash2,
   Download,
   Loader2,
+  Upload,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
@@ -124,7 +129,9 @@ export function ResumeBuilderClient() {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResumeValues>({
     resolver: zodResolver(resumeSchema),
@@ -207,9 +214,54 @@ export function ResumeBuilderClient() {
     window.print();
   }
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsParsing(true);
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const resumeDataUri = reader.result as string;
+        const parsedData = await parseResume({ resumeDataUri });
+
+        // Reset form with parsed data
+        form.reset({
+          ...parsedData,
+          linkedin: parsedData.linkedin || '',
+          website: parsedData.website || '',
+          projects: parsedData.projects || [],
+          certificates: parsedData.certificates || [],
+        });
+
+        toast({
+          title: 'Resume Parsed',
+          description: 'Your resume has been imported successfully.',
+        });
+      };
+      reader.onerror = (error) => {
+        throw new Error('Error reading file');
+      };
+    } catch (error) {
+      console.error('Resume parsing failed:', error);
+      toast({
+        title: 'Error Parsing Resume',
+        description: 'Could not parse the resume. Please try another file or enter details manually.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsParsing(false);
+      // Reset file input
+      if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-2 order-2 md:order-1">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="order-2 md:order-1">
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="print:hidden">
             <div className="flex items-center justify-between">
@@ -218,55 +270,76 @@ export function ResumeBuilderClient() {
                   Resume Builder
                 </CardTitle>
                 <CardDescription>
-                  Fill out the sections below to create your resume.
+                  Fill out the sections below or upload your resume to get started.
                 </CardDescription>
               </div>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline">
-                    <Sparkles className="mr-2 h-4 w-4" /> Improve with AI
-                  </Button>
-                </SheetTrigger>
-                <SheetContent className="w-full sm:max-w-lg">
-                  <SheetHeader>
-                    <SheetTitle>Improve based on Job Description</SheetTitle>
-                    <SheetDescription>
-                      Paste a job description and our AI will suggest keywords
-                      and rephrase bullet points to optimize your resume.
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="grid gap-4 py-4">
-                    <Textarea
-                      placeholder="Paste job description here..."
-                      className="min-h-[200px]"
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
-                    />
-                    <Button onClick={handleImproveWithAI} disabled={isLoading}>
-                      {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Sparkles className="mr-2 h-4 w-4" />
-                      )}
-                      Generate Suggestions
+              <div className="flex gap-2">
+                <Input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileUpload} 
+                  className="hidden" 
+                  accept=".pdf,.doc,.docx,.txt"
+                />
+                 <Button 
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isParsing}
+                 >
+                   {isParsing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Upload className="mr-2 h-4 w-4" />
+                    )}
+                   Upload Resume
+                 </Button>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline">
+                      <Sparkles className="mr-2 h-4 w-4" /> Improve with AI
                     </Button>
-                  </div>
-                  {aiResult && (
-                    <div>
-                      <h3 className="font-semibold">AI Suggestions</h3>
-                      <Progress value={aiResult.atsScore} className="my-2" />
-                      <p className="text-sm text-muted-foreground">
-                        ATS Score: {aiResult.atsScore}%
-                      </p>
-                      <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">
-                        {aiResult.suggestions.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ul>
+                  </SheetTrigger>
+                  <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+                    <SheetHeader>
+                      <SheetTitle>Improve based on Job Description</SheetTitle>
+                      <SheetDescription>
+                        Paste a job description and our AI will suggest keywords
+                        and rephrase bullet points to optimize your resume.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="grid gap-4 py-4">
+                      <Textarea
+                        placeholder="Paste job description here..."
+                        className="min-h-[200px]"
+                        value={jobDescription}
+                        onChange={(e) => setJobDescription(e.target.value)}
+                      />
+                      <Button onClick={handleImproveWithAI} disabled={isLoading}>
+                        {isLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="mr-2 h-4 w-4" />
+                        )}
+                        Generate Suggestions
+                      </Button>
                     </div>
-                  )}
-                </SheetContent>
-              </Sheet>
+                    {aiResult && (
+                      <div>
+                        <h3 className="font-semibold">AI Suggestions</h3>
+                        <Progress value={aiResult.atsScore} className="my-2" />
+                        <p className="text-sm text-muted-foreground">
+                          ATS Score: {aiResult.atsScore}%
+                        </p>
+                        <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">
+                          {aiResult.suggestions.map((s, i) => (
+                            <li key={i}>{s}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </SheetContent>
+                </Sheet>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -423,7 +496,7 @@ export function ResumeBuilderClient() {
           </CardHeader>
         </Card>
       </div>
-      <div className="md:col-span-1 order-1 md:order-2 print:hidden">
+      <div className="order-1 md:order-2 print:hidden">
         <div className="sticky top-8">
             <h3 className="font-headline text-lg font-semibold mb-4">Live Preview</h3>
             <div className="w-[300px] h-[424px] bg-white rounded-lg shadow-lg overflow-hidden">
