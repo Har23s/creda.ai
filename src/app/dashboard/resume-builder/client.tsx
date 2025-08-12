@@ -123,6 +123,8 @@ const defaultValues: ResumeValues = {
   skills: 'TypeScript, React, Node.js, Next.js, GraphQL, PostgreSQL, Docker',
 };
 
+const SUPPORTED_MIME_TYPES = ['application/pdf', 'text/plain'];
+
 export function ResumeBuilderClient() {
   const [jobDescription, setJobDescription] = useState('');
   const [aiResult, setAiResult] = useState<AtsResumeOptimizationOutput | null>(
@@ -193,7 +195,21 @@ export function ResumeBuilderClient() {
         jobDescription,
       });
       setAiResult(result);
-      form.setValue('summary', JSON.parse(result.optimizedResume).summary, { shouldValidate: true });
+      try {
+        const optimizedData = JSON.parse(result.optimizedResume);
+         if(optimizedData.summary) {
+            form.setValue('summary', optimizedData.summary, { shouldValidate: true });
+         }
+      } catch (e) {
+         console.error("Failed to parse optimized resume JSON", e);
+         toast({
+            title: 'AI Response Error',
+            description: 'The AI returned an unexpected format. Please try again.',
+            variant: 'destructive'
+         });
+         return;
+      }
+     
       toast({
         title: 'Resume Improved!',
         description: 'AI suggestions have been applied.',
@@ -218,6 +234,15 @@ export function ResumeBuilderClient() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!SUPPORTED_MIME_TYPES.includes(file.type)) {
+      toast({
+        title: 'Unsupported File Type',
+        description: `Please upload a PDF or TXT file. You uploaded a ${file.type} file.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsParsing(true);
     try {
       const reader = new FileReader();
@@ -226,7 +251,6 @@ export function ResumeBuilderClient() {
         const resumeDataUri = reader.result as string;
         const parsedData = await parseResume({ resumeDataUri });
 
-        // Reset form with parsed data
         form.reset({
           ...parsedData,
           linkedin: parsedData.linkedin || '',
@@ -252,7 +276,6 @@ export function ResumeBuilderClient() {
       });
     } finally {
       setIsParsing(false);
-      // Reset file input
       if(fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -264,7 +287,7 @@ export function ResumeBuilderClient() {
       <div className="order-2 md:order-1">
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="print:hidden">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <CardTitle className="font-headline text-2xl">
                   Resume Builder
@@ -274,25 +297,6 @@ export function ResumeBuilderClient() {
                 </CardDescription>
               </div>
               <div className="flex gap-2">
-                <Input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileUpload} 
-                  className="hidden" 
-                  accept=".pdf,.txt"
-                />
-                 <Button 
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isParsing}
-                 >
-                   {isParsing ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Upload className="mr-2 h-4 w-4" />
-                    )}
-                   Upload Resume
-                 </Button>
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="outline">
@@ -339,6 +343,25 @@ export function ResumeBuilderClient() {
                     )}
                   </SheetContent>
                 </Sheet>
+                 <Button 
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isParsing}
+                 >
+                   {isParsing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Upload className="mr-2 h-4 w-4" />
+                    )}
+                   Upload Resume
+                 </Button>
+                <Input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileUpload} 
+                  className="hidden" 
+                  accept={SUPPORTED_MIME_TYPES.join(',')}
+                />
               </div>
             </div>
           </CardHeader>
@@ -507,3 +530,5 @@ export function ResumeBuilderClient() {
     </div>
   );
 }
+
+    
