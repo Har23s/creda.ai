@@ -102,10 +102,10 @@ const defaultValues: ResumeValues = {
 };
 
 const templates = [
-  { name: 'Classic', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
-  { name: 'Modern', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
-  { name: 'Minimalist', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
-  { name: 'Professional', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template' },
+  { name: 'Classic', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template no-photo' },
+  { name: 'Modern', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template with-photo' },
+  { name: 'Minimalist', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template minimal' },
+  { name: 'Professional', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'cover letter template professional' },
 ];
 
 export function CoverLetterClient() {

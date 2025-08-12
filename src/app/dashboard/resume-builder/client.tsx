@@ -102,8 +102,8 @@ const defaultValues: ResumeValues = {
 };
 
 const templates = [
-  { name: 'Classic ATS', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template no photo' },
-  { name: 'Modern with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template with photo' },
+  { name: 'Classic ATS', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template no-photo' },
+  { name: 'Modern with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template with-photo' },
   { name: 'Minimalist Tech', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template minimal' },
   { name: 'Professional with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template professional' },
 ];
@@ -366,7 +366,7 @@ export function ResumeBuilderClient() {
                 ))}
               </div>
               <Separator />
-              <div className="aspect-[8.5/11] w-full rounded-md border bg-white p-4 shadow-sm">
+              <div className="aspect-[8.5/11] w-full overflow-auto rounded-md border bg-white p-4 shadow-sm">
                 <h2 className="text-xl font-bold text-black">{form.watch('fullName')}</h2>
                 <div className="text-xs text-gray-600 flex gap-4">
                     <span>{form.watch('email')}</span>
