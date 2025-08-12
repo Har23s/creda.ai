@@ -101,13 +101,6 @@ const defaultValues: ResumeValues = {
   skills: 'TypeScript, React, Node.js, Next.js, GraphQL, PostgreSQL, Docker',
 };
 
-const templates = [
-  { name: 'Classic ATS', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template no-photo' },
-  { name: 'Modern with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template with-photo' },
-  { name: 'Minimalist Tech', hasPhoto: false, thumb: 'https://placehold.co/150x200.png', hint: 'resume template minimal' },
-  { name: 'Professional with Photo', hasPhoto: true, thumb: 'https://placehold.co/150x200.png', hint: 'resume template professional' },
-];
-
 export function ResumeBuilderClient() {
   const [jobDescription, setJobDescription] = useState('');
   const [aiResult, setAiResult] = useState<AtsResumeOptimizationOutput | null>(
@@ -180,212 +173,168 @@ export function ResumeBuilderClient() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-      <div className="lg:col-span-2 print:col-span-3">
-        <Card className="print:shadow-none print:border-none">
-          <CardHeader className="print:hidden">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="font-headline text-2xl">
-                  Resume Builder
-                </CardTitle>
-                <CardDescription>
-                  Fill out the sections below to create your resume.
-                </CardDescription>
-              </div>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline">
-                    <Sparkles className="mr-2 h-4 w-4" /> Improve with AI
+    <div className="max-w-4xl mx-auto">
+      <Card className="print:shadow-none print:border-none">
+        <CardHeader className="print:hidden">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="font-headline text-2xl">
+                Resume Builder
+              </CardTitle>
+              <CardDescription>
+                Fill out the sections below to create your resume.
+              </CardDescription>
+            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">
+                  <Sparkles className="mr-2 h-4 w-4" /> Improve with AI
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-full sm:max-w-lg">
+                <SheetHeader>
+                  <SheetTitle>Improve based on Job Description</SheetTitle>
+                  <SheetDescription>
+                    Paste a job description and our AI will suggest keywords
+                    and rephrase bullet points to optimize your resume.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="grid gap-4 py-4">
+                  <Textarea
+                    placeholder="Paste job description here..."
+                    className="min-h-[200px]"
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                  />
+                  <Button onClick={handleImproveWithAI} disabled={isLoading}>
+                    {isLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="mr-2 h-4 w-4" />
+                    )}
+                    Generate Suggestions
                   </Button>
-                </SheetTrigger>
-                <SheetContent className="w-full sm:max-w-lg">
-                  <SheetHeader>
-                    <SheetTitle>Improve based on Job Description</SheetTitle>
-                    <SheetDescription>
-                      Paste a job description and our AI will suggest keywords
-                      and rephrase bullet points to optimize your resume.
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="grid gap-4 py-4">
-                    <Textarea
-                      placeholder="Paste job description here..."
-                      className="min-h-[200px]"
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
-                    />
-                    <Button onClick={handleImproveWithAI} disabled={isLoading}>
-                      {isLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Sparkles className="mr-2 h-4 w-4" />
-                      )}
-                      Generate Suggestions
-                    </Button>
-                  </div>
-                  {aiResult && (
-                    <div>
-                      <h3 className="font-semibold">AI Suggestions</h3>
-                      <Progress value={aiResult.atsScore} className="my-2" />
-                      <p className="text-sm text-muted-foreground">
-                        ATS Score: {aiResult.atsScore}%
-                      </p>
-                      <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">
-                        {aiResult.suggestions.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </SheetContent>
-              </Sheet>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form className="space-y-8">
-                <div className="space-y-4">
-                  <h3 className="font-headline text-lg font-semibold">
-                    Personal Details
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormField name="fullName" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
-                    <FormField name="email" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Email</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
-                    <FormField name="phone" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
-                    <FormField name="linkedin" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>LinkedIn</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
-                  </div>
                 </div>
-
-                <Separator />
-
-                <FormField name="summary" control={form.control} render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="font-headline text-lg font-semibold">Summary</FormLabel>
-                        <FormControl><Textarea {...field} rows={5} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-
-                <Separator />
-                
-                <div>
-                  <h3 className="font-headline text-lg font-semibold mb-4">Experience</h3>
-                  <div className="space-y-6">
-                    {expFields.map((field, index) => (
-                      <Card key={field.id} className="p-4 print:border-none print:shadow-none">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                           <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
-                                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                            )}/>
-                            <FormField name={`experience.${index}.company`} control={form.control} render={({ field }) => (
-                                <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                            )}/>
-                        </div>
-                        <FormField name={`experience.${index}.dates`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                        )}/>
-                        <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl></FormItem>
-                        )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
-                      </Card>
-                    ))}
+                {aiResult && (
+                  <div>
+                    <h3 className="font-semibold">AI Suggestions</h3>
+                    <Progress value={aiResult.atsScore} className="my-2" />
+                    <p className="text-sm text-muted-foreground">
+                      ATS Score: {aiResult.atsScore}%
+                    </p>
+                    <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">
+                      {aiResult.suggestions.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => appendExp({ title: '', company: '', dates: '', description: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Experience</Button>
+                )}
+              </SheetContent>
+            </Sheet>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="font-headline text-lg font-semibold">
+                  Personal Details
+                </h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField name="fullName" control={form.control} render={({ field }) => (
+                      <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )}/>
+                  <FormField name="email" control={form.control} render={({ field }) => (
+                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )}/>
+                  <FormField name="phone" control={form.control} render={({ field }) => (
+                      <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )}/>
+                  <FormField name="linkedin" control={form.control} render={({ field }) => (
+                      <FormItem><FormLabel>LinkedIn</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )}/>
                 </div>
-                
-                <Separator />
-
-                <div>
-                    <h3 className="font-headline text-lg font-semibold mb-4">Education</h3>
-                    <div className="space-y-6">
-                    {eduFields.map((field, index) => (
-                      <Card key={field.id} className="p-4 print:border-none print:shadow-none">
-                        <FormField name={`education.${index}.school`} control={form.control} render={({ field }) => (
-                            <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                        )}/>
-                        <FormField name={`education.${index}.degree`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                        )}/>
-                        <FormField name={`education.${index}.dates`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                        )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
-                      </Card>
-                    ))}
-                    </div>
-                     <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
-                </div>
-                
-                <Separator />
-                
-                <FormField name="skills" control={form.control} render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="font-headline text-lg font-semibold">Skills</FormLabel>
-                        <FormControl><Textarea {...field} placeholder="e.g. JavaScript, React, Leadership" /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="lg:col-span-1 print:hidden">
-        <Card className="sticky top-24">
-          <CardHeader>
-            <CardTitle className="font-headline">Preview & Templates</CardTitle>
-            <CardDescription>
-              Select a template and see a live preview.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                {templates.map((template) => (
-                  <div key={template.name} className="relative cursor-pointer">
-                    <Image
-                      src={template.thumb}
-                      alt={template.name}
-                      width={150}
-                      height={200}
-                      data-ai-hint={template.hint}
-                      className="rounded-md border-2 border-transparent hover:border-primary"
-                    />
-                    <p className="text-center text-sm mt-1">{template.name}</p>
-                  </div>
-                ))}
               </div>
+
               <Separator />
-              <div className="aspect-[8.5/11] w-full overflow-auto rounded-md border bg-white p-4 shadow-sm">
-                <h2 className="text-xl font-bold text-black">{form.watch('fullName')}</h2>
-                <div className="text-xs text-gray-600 flex gap-4">
-                    <span>{form.watch('email')}</span>
-                    <span>{form.watch('phone')}</span>
+
+              <FormField name="summary" control={form.control} render={({ field }) => (
+                  <FormItem>
+                      <FormLabel className="font-headline text-lg font-semibold">Summary</FormLabel>
+                      <FormControl><Textarea {...field} rows={5} /></FormControl>
+                      <FormMessage />
+                  </FormItem>
+              )}/>
+
+              <Separator />
+              
+              <div>
+                <h3 className="font-headline text-lg font-semibold mb-4">Experience</h3>
+                <div className="space-y-6">
+                  {expFields.map((field, index) => (
+                    <Card key={field.id} className="p-4 print:border-none print:shadow-none">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
+                              <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          )}/>
+                          <FormField name={`experience.${index}.company`} control={form.control} render={({ field }) => (
+                              <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          )}/>
+                      </div>
+                      <FormField name={`experience.${index}.dates`} control={form.control} render={({ field }) => (
+                          <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      )}/>
+                      <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
+                          <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl></FormItem>
+                      )}/>
+                      <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                    </Card>
+                  ))}
                 </div>
-                <hr className="my-2" />
-                <h3 className="text-sm font-bold text-black mt-2">Summary</h3>
-                <p className="text-xs text-gray-800">{form.watch('summary')}</p>
-                {/* Simplified preview */}
+                <Button variant="outline" size="sm" onClick={() => appendExp({ title: '', company: '', dates: '', description: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Experience</Button>
               </div>
-            </div>
-          </CardContent>
-          <CardHeader>
-             <Button className="w-full" onClick={handleDownload}>
-              <Download className="mr-2 h-4 w-4" /> Download PDF
-            </Button>
-          </CardHeader>
-        </Card>
-      </div>
+              
+              <Separator />
+
+              <div>
+                  <h3 className="font-headline text-lg font-semibold mb-4">Education</h3>
+                  <div className="space-y-6">
+                  {eduFields.map((field, index) => (
+                    <Card key={field.id} className="p-4 print:border-none print:shadow-none">
+                      <FormField name={`education.${index}.school`} control={form.control} render={({ field }) => (
+                          <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      )}/>
+                      <FormField name={`education.${index}.degree`} control={form.control} render={({ field }) => (
+                          <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      )}/>
+                      <FormField name={`education.${index}.dates`} control={form.control} render={({ field }) => (
+                          <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      )}/>
+                      <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                    </Card>
+                  ))}
+                  </div>
+                    <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
+              </div>
+              
+              <Separator />
+              
+              <FormField name="skills" control={form.control} render={({ field }) => (
+                  <FormItem>
+                      <FormLabel className="font-headline text-lg font-semibold">Skills</FormLabel>
+                      <FormControl><Textarea {...field} placeholder="e.g. JavaScript, React, Leadership" /></FormControl>
+                      <FormMessage />
+                  </FormItem>
+              )}/>
+            </form>
+          </Form>
+        </CardContent>
+        <CardHeader className="print:hidden">
+            <Button className="w-full" onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" /> Download PDF
+          </Button>
+        </CardHeader>
+      </Card>
     </div>
   );
 }
