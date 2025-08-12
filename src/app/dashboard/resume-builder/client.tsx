@@ -279,7 +279,7 @@ export function ResumeBuilderClient() {
                   ref={fileInputRef} 
                   onChange={handleFileUpload} 
                   className="hidden" 
-                  accept=".pdf,.doc,.docx,.txt"
+                  accept=".pdf,.txt"
                 />
                  <Button 
                   variant="outline"
