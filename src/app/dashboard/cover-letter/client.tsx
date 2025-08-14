@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   generateCoverLetter,
   type GenerateCoverLetterOutput,
@@ -191,9 +193,45 @@ export function CoverLetterClient() {
     }
   };
   
-  const handleDownload = () => {
-    window.print();
-  }
+  const handleDownload = async () => {
+    const input = document.getElementById('cover-letter-preview');
+    if (!input) {
+      toast({
+        title: 'Error',
+        description: 'Could not find the cover letter preview to download.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    try {
+      const canvas = await html2canvas(input, { 
+        scale: 2, 
+        useCORS: true, 
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('download.pdf');
+      
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast({
+        title: 'Error',
+        description: 'Failed to generate PDF. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -306,15 +344,19 @@ export function CoverLetterClient() {
         <div className="sticky top-8">
             <h3 className="font-headline text-lg font-semibold mb-4 text-center">Live Preview</h3>
             <div 
-              className="w-[300px] h-[424px] mx-auto bg-white shadow-lg rounded-md overflow-hidden"
-              style={{ transform: 'scale(1)', transformOrigin: 'top center' }}
+              id="cover-letter-preview-wrapper"
+              className="w-[300px] h-[424px] mx-auto bg-background shadow-lg rounded-md overflow-hidden"
             >
-              <ResumePreview {...resumeData} />
+              <div 
+                id="cover-letter-preview"
+                className="w-[800px] h-[1128px] origin-top-left bg-white"
+                style={{ transform: 'scale(0.375)' }}
+              >
+                  <ResumePreview {...resumeData} />
+              </div>
             </div>
         </div>
       </div>
     </div>
   );
 }
-
-    

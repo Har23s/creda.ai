@@ -18,7 +18,7 @@ export function ResumePreview(props: ResumeValues) {
     } = props;
     
     return (
-        <div className="bg-white text-black p-8 w-full h-full overflow-y-auto font-body text-sm origin-top-left scale-[0.375] sm:scale-100 md:scale-[0.375] lg:scale-100">
+        <div className="bg-white text-black p-8 w-full h-full overflow-hidden font-body text-sm">
             <header className="text-center mb-6">
                 <h1 className="font-headline text-3xl font-bold tracking-tight">{fullName}</h1>
                 <div className="flex justify-center items-center gap-4 mt-2 text-xs">
@@ -120,5 +120,3 @@ export function ResumePreview(props: ResumeValues) {
         </div>
     )
 }
-
-    

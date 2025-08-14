@@ -5,6 +5,8 @@ import { useState, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   atsResumeOptimization,
   type AtsResumeOptimizationOutput,
@@ -226,9 +228,51 @@ export function ResumeBuilderClient() {
     }
   };
   
-  const handleDownload = () => {
-    window.print();
-  }
+  const handleDownload = async () => {
+    const input = document.getElementById('resume-preview');
+    if (!input) {
+      toast({
+        title: 'Error',
+        description: 'Could not find the resume preview to download.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    try {
+      // Use html2canvas to render the div to a canvas
+      const canvas = await html2canvas(input, { 
+        scale: 2, // Higher scale for better quality
+        useCORS: true, 
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+      
+      // Get image data from canvas
+      const imgData = canvas.toDataURL('image/png');
+      
+      // Create a new jsPDF instance
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      // Add the image to the PDF
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      
+      // Save the PDF
+      pdf.save('download.pdf');
+      
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast({
+        title: 'Error',
+        description: 'Failed to generate PDF. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -523,15 +567,19 @@ export function ResumeBuilderClient() {
         <div className="sticky top-8">
             <h3 className="font-headline text-lg font-semibold mb-4 text-center">Live Preview</h3>
             <div 
-              className="w-[300px] h-[424px] mx-auto bg-white shadow-lg rounded-md overflow-hidden"
-              style={{ transform: 'scale(1)', transformOrigin: 'top center' }}
+              id="resume-preview-wrapper"
+              className="w-[300px] h-[424px] mx-auto bg-background shadow-lg rounded-md overflow-hidden"
             >
-              <ResumePreview {...resumeData} />
+              <div 
+                id="resume-preview"
+                className="w-[800px] h-[1128px] origin-top-left bg-white"
+                style={{ transform: 'scale(0.375)' }}
+              >
+                  <ResumePreview {...resumeData} />
+              </div>
             </div>
         </div>
       </div>
     </div>
   );
 }
-
-    
