@@ -1,6 +1,6 @@
+
 import { type ResumeValues } from '@/app/dashboard/resume-builder/client';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 
 export function ResumePreview(props: ResumeValues) {
     const {
@@ -18,7 +18,7 @@ export function ResumePreview(props: ResumeValues) {
     } = props;
     
     return (
-        <div className="bg-white text-black rounded-lg shadow-lg p-8 w-full h-full overflow-y-auto font-body text-sm origin-top-left scale-[0.375] sm:scale-100 md:scale-[0.375] lg:scale-100">
+        <div className="bg-white text-black p-8 w-full h-full overflow-y-auto font-body text-sm origin-top-left scale-[0.375] sm:scale-100 md:scale-[0.375] lg:scale-100">
             <header className="text-center mb-6">
                 <h1 className="font-headline text-3xl font-bold tracking-tight">{fullName}</h1>
                 <div className="flex justify-center items-center gap-4 mt-2 text-xs">
@@ -33,26 +33,28 @@ export function ResumePreview(props: ResumeValues) {
 
             <section>
                 <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Summary</h2>
-                <p className="text-gray-700">{summary}</p>
+                <p className="text-gray-700 whitespace-pre-wrap">{summary}</p>
             </section>
             
-            <section className="mt-6">
-                 <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Experience</h2>
-                 <div className="space-y-4">
-                    {experience.map((exp, index) => (
-                        <div key={index}>
-                            <div className="flex justify-between items-baseline">
-                                <h3 className="font-bold text-base">{exp.title}</h3>
-                                <p className="text-xs text-gray-600">{exp.dates}</p>
+            {experience && experience.length > 0 && (
+                <section className="mt-6">
+                    <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Experience</h2>
+                    <div className="space-y-4">
+                        {experience.map((exp, index) => (
+                            <div key={index}>
+                                <div className="flex justify-between items-baseline">
+                                    <h3 className="font-bold text-base">{exp.title}</h3>
+                                    <p className="text-xs text-gray-600">{exp.dates}</p>
+                                </div>
+                                <p className="italic text-gray-800">{exp.company}</p>
+                                <div className="prose prose-sm mt-1 text-gray-700 whitespace-pre-wrap">
+                                    {exp.description}
+                                </div>
                             </div>
-                            <p className="italic text-gray-800">{exp.company}</p>
-                            <div className="prose prose-sm mt-1 text-gray-700 whitespace-pre-wrap">
-                                {exp.description}
-                            </div>
-                        </div>
-                    ))}
-                 </div>
-            </section>
+                        ))}
+                    </div>
+                </section>
+            )}
             
             {projects && projects.length > 0 && (
               <section className="mt-6">
@@ -73,20 +75,22 @@ export function ResumePreview(props: ResumeValues) {
               </section>
             )}
 
-            <section className="mt-6">
-                 <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Education</h2>
-                 <div className="space-y-3">
-                    {education.map((edu, index) => (
-                        <div key={index}>
-                            <div className="flex justify-between items-baseline">
-                                <h3 className="font-bold text-base">{edu.degree}</h3>
-                                <p className="text-xs text-gray-600">{edu.dates}</p>
+            {education && education.length > 0 && (
+                <section className="mt-6">
+                    <h2 className="font-headline text-sm font-bold uppercase tracking-widest border-b-2 border-gray-300 pb-1 mb-3">Education</h2>
+                    <div className="space-y-3">
+                        {education.map((edu, index) => (
+                            <div key={index}>
+                                <div className="flex justify-between items-baseline">
+                                    <h3 className="font-bold text-base">{edu.degree}</h3>
+                                    <p className="text-xs text-gray-600">{edu.dates}</p>
+                                </div>
+                                <p className="italic text-gray-800">{edu.school}</p>
                             </div>
-                            <p className="italic text-gray-800">{edu.school}</p>
-                        </div>
-                    ))}
-                 </div>
-            </section>
+                        ))}
+                    </div>
+                </section>
+            )}
             
             {certificates && certificates.length > 0 && (
                 <section className="mt-6">
@@ -116,3 +120,5 @@ export function ResumePreview(props: ResumeValues) {
         </div>
     )
 }
+
+    

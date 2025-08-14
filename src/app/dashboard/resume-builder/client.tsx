@@ -159,7 +159,7 @@ export function ResumeBuilderClient() {
     control: form.control,
     name: 'education',
   });
-  const {
+    const {
     fields: projectFields,
     append: appendProject,
     remove: removeProject,
@@ -283,7 +283,8 @@ export function ResumeBuilderClient() {
   };
 
   return (
-    <div className="grid grid-cols-1">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div className="order-2 md:order-1">
         <Card className="print:shadow-none print:border-none">
           <CardHeader className="print:hidden">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -295,7 +296,7 @@ export function ResumeBuilderClient() {
                   Fill out the sections below or upload your resume to get started.
                 </CardDescription>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="outline">
@@ -517,6 +518,20 @@ export function ResumeBuilderClient() {
             </Button>
           </CardHeader>
         </Card>
+      </div>
+      <div className="order-1 md:order-2">
+        <div className="sticky top-8">
+            <h3 className="font-headline text-lg font-semibold mb-4 text-center">Live Preview</h3>
+            <div 
+              className="w-[300px] h-[424px] mx-auto bg-white shadow-lg rounded-md overflow-hidden"
+              style={{ transform: 'scale(1)', transformOrigin: 'top center' }}
+            >
+              <ResumePreview {...resumeData} />
+            </div>
+        </div>
+      </div>
     </div>
   );
 }
+
+    
