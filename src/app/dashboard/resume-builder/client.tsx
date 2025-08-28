@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef } from 'react';
@@ -142,7 +141,7 @@ export function ResumeBuilderClient() {
     defaultValues,
     mode: 'onChange',
   });
-  
+
   const resumeData = form.watch();
 
   const {
@@ -153,6 +152,7 @@ export function ResumeBuilderClient() {
     control: form.control,
     name: 'experience',
   });
+
   const {
     fields: eduFields,
     append: appendEdu,
@@ -161,7 +161,8 @@ export function ResumeBuilderClient() {
     control: form.control,
     name: 'education',
   });
-    const {
+
+  const {
     fields: projectFields,
     append: appendProject,
     remove: removeProject,
@@ -169,6 +170,7 @@ export function ResumeBuilderClient() {
     control: form.control,
     name: 'projects',
   });
+
   const {
     fields: certFields,
     append: appendCert,
@@ -179,6 +181,63 @@ export function ResumeBuilderClient() {
   });
 
   const resumeText = JSON.stringify(form.getValues(), null, 2);
+
+  const handleAddExperience = (e: React.MouseEvent) => {
+    e.preventDefault();
+    appendExp({
+      title: '',
+      company: '',
+      dates: '',
+      description: ''
+    });
+  };
+
+  const handleAddEducation = (e: React.MouseEvent) => {
+    e.preventDefault();
+    appendEdu({
+      school: '',
+      degree: '',
+      dates: ''
+    });
+  };
+
+  const handleAddProject = (e: React.MouseEvent) => {
+    e.preventDefault();
+    appendProject({
+      name: '',
+      description: '',
+      url: ''
+    });
+  };
+
+  const handleAddCertificate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    appendCert({
+      name: '',
+      issuer: '',
+      date: ''
+    });
+  };
+
+  const handleRemoveExperience = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    removeExp(index);
+  };
+
+  const handleRemoveEducation = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    removeEdu(index);
+  };
+
+  const handleRemoveProject = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    removeProject(index);
+  };
+
+  const handleRemoveCertificate = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    removeCert(index);
+  };
 
   const handleImproveWithAI = async () => {
     if (!jobDescription) {
@@ -199,19 +258,19 @@ export function ResumeBuilderClient() {
       setAiResult(result);
       try {
         const optimizedData = JSON.parse(result.optimizedResume);
-         if(optimizedData.summary) {
-            form.setValue('summary', optimizedData.summary, { shouldValidate: true });
-         }
+        if (optimizedData.summary) {
+          form.setValue('summary', optimizedData.summary, { shouldValidate: true });
+        }
       } catch (e) {
-         console.error("Failed to parse optimized resume JSON", e);
-         toast({
-            title: 'AI Response Error',
-            description: 'The AI returned an unexpected format. Please try again.',
-            variant: 'destructive'
-         });
-         return;
+        console.error("Failed to parse optimized resume JSON", e);
+        toast({
+          title: 'AI Response Error',
+          description: 'The AI returned an unexpected format. Please try again.',
+          variant: 'destructive'
+        });
+        return;
       }
-     
+
       toast({
         title: 'Resume Improved!',
         description: 'AI suggestions have been applied.',
@@ -227,52 +286,67 @@ export function ResumeBuilderClient() {
       setIsLoading(false);
     }
   };
-  
-  const handleDownload = async () => {
-    const input = document.getElementById('resume-preview');
-    if (!input) {
-      toast({
-        title: 'Error',
-        description: 'Could not find the resume preview to download.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    try {
-      // Use html2canvas to render the div to a canvas
-      const canvas = await html2canvas(input, { 
-        scale: 2, // Higher scale for better quality
-        useCORS: true, 
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      });
-      
-      // Get image data from canvas
-      const imgData = canvas.toDataURL('image/png');
-      
-      // Create a new jsPDF instance
-      const pdf = new jsPDF({
-        orientation: 'p',
-        unit: 'px',
-        format: [canvas.width, canvas.height]
-      });
 
-      // Add the image to the PDF
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      
-      // Save the PDF
-      pdf.save('download.pdf');
-      
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-      toast({
-        title: 'Error',
-        description: 'Failed to generate PDF. Please try again.',
-        variant: 'destructive',
-      });
+  const handleDownload = async () => {
+  const input = document.getElementById("resume-full");
+
+  if (!input) {
+    toast({
+      title: "Error",
+      description: "Could not find the resume preview to download.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
+    const canvas = await html2canvas(input, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+
+    // Create PDF in A4 format
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Scale canvas proportionally to fit page
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+    let position = 0;
+
+    if (imgHeight <= pageHeight) {
+      // Fits on one page
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    } else {
+      // Split across multiple pages
+      let heightLeft = imgHeight;
+
+      while (heightLeft > 0) {
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        position -= pageHeight;
+
+        if (heightLeft > 0) pdf.addPage();
+      }
     }
-  };
+
+    pdf.save("resume.pdf");
+  } catch (error) {
+    console.error("PDF generation failed:", error);
+    toast({
+      title: "Error",
+      description: "Failed to generate PDF. Please try again.",
+      variant: "destructive",
+    });
+  }
+};
+
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -320,7 +394,7 @@ export function ResumeBuilderClient() {
       });
     } finally {
       setIsParsing(false);
-      if(fileInputRef.current) {
+      if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
@@ -387,23 +461,23 @@ export function ResumeBuilderClient() {
                     )}
                   </SheetContent>
                 </Sheet>
-                 <Button 
+                <Button
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isParsing}
-                 >
-                   {isParsing ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Upload className="mr-2 h-4 w-4" />
-                    )}
-                   Upload Resume
-                 </Button>
-                <Input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileUpload} 
-                  className="hidden" 
+                >
+                  {isParsing ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  Upload Resume
+                </Button>
+                <Input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  className="hidden"
                   accept={SUPPORTED_MIME_TYPES.join(',')}
                 />
               </div>
@@ -411,91 +485,123 @@ export function ResumeBuilderClient() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form className="space-y-8">
+              <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
                 <div className="space-y-4">
                   <h3 className="font-headline text-lg font-semibold">
                     Personal Details
                   </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField name="fullName" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
+                      <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
                     <FormField name="email" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Email</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
+                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
                     <FormField name="phone" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
+                      <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
                     <FormField name="linkedin" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>LinkedIn</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
-                     <FormField name="website" control={form.control} render={({ field }) => (
-                        <FormItem><FormLabel>Website</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )}/>
+                      <FormItem><FormLabel>LinkedIn</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField name="website" control={form.control} render={({ field }) => (
+                      <FormItem><FormLabel>Website</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
                   </div>
                 </div>
 
                 <Separator />
 
                 <FormField name="summary" control={form.control} render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="font-headline text-lg font-semibold">Summary</FormLabel>
-                        <FormControl><Textarea {...field} rows={5} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                  <FormItem>
+                    <FormLabel className="font-headline text-lg font-semibold">Summary</FormLabel>
+                    <FormControl><Textarea {...field} rows={5} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
 
                 <Separator />
-                
+
                 <div>
                   <h3 className="font-headline text-lg font-semibold mb-4">Experience</h3>
                   <div className="space-y-6">
                     {expFields.map((field, index) => (
                       <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
-                                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                            )}/>
-                            <FormField name={`experience.${index}.company`} control={form.control} render={({ field }) => (
-                                <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                            )}/>
+                          <FormField name={`experience.${index}.title`} control={form.control} render={({ field }) => (
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField name={`experience.${index}.company`} control={form.control} render={({ field }) => (
+                            <FormItem><FormLabel>Company</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
                         </div>
                         <FormField name={`experience.${index}.dates`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
+                          <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
                         <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
-                        )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeExp(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                          <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => handleRemoveExperience(index, e)}
+                          className="mt-4 print:hidden"
+                          type="button"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Remove
+                        </Button>
                       </Card>
                     ))}
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => appendExp({ title: '', company: '', dates: '', description: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Experience</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddExperience}
+                    className="mt-4 print:hidden"
+                    type="button"
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
+                  </Button>
                 </div>
-                
+
                 <Separator />
 
                 <div>
-                    <h3 className="font-headline text-lg font-semibold mb-4">Education</h3>
-                    <div className="space-y-6">
+                  <h3 className="font-headline text-lg font-semibold mb-4">Education</h3>
+                  <div className="space-y-6">
                     {eduFields.map((field, index) => (
                       <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <FormField name={`education.${index}.school`} control={form.control} render={({ field }) => (
-                            <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
+                          <FormItem><FormLabel>School</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
                         <FormField name={`education.${index}.degree`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
+                          <FormItem className="mt-4"><FormLabel>Degree</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
                         <FormField name={`education.${index}.dates`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeEdu(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove</Button>
+                          <FormItem className="mt-4"><FormLabel>Dates</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => handleRemoveEducation(index, e)}
+                          className="mt-4 print:hidden"
+                          type="button"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Remove
+                        </Button>
                       </Card>
                     ))}
-                    </div>
-                      <Button variant="outline" size="sm" onClick={() => appendEdu({ school: '', degree: '', dates: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Education</Button>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddEducation}
+                    className="mt-4 print:hidden"
+                    type="button"
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Education
+                  </Button>
                 </div>
-                
+
                 <Separator />
 
                 <div>
@@ -504,60 +610,92 @@ export function ResumeBuilderClient() {
                     {projectFields.map((field, index) => (
                       <Card key={field.id} className="p-4 print:border-none print:shadow-none">
                         <FormField name={`projects.${index}.name`} control={form.control} render={({ field }) => (
-                            <FormItem><FormLabel>Project Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
+                          <FormItem><FormLabel>Project Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
                         <FormField name={`projects.${index}.description`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={3} /></FormControl><FormMessage /></FormItem>
-                        )}/>
-                         <FormField name={`projects.${index}.url`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Project URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeProject(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove Project</Button>
+                          <FormItem className="mt-4"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} rows={3} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField name={`projects.${index}.url`} control={form.control} render={({ field }) => (
+                          <FormItem className="mt-4"><FormLabel>Project URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => handleRemoveProject(index, e)}
+                          className="mt-4 print:hidden"
+                          type="button"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Remove Project
+                        </Button>
                       </Card>
                     ))}
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => appendProject({ name: '', description: '', url: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Project</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddProject}
+                    className="mt-4 print:hidden"
+                    type="button"
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                  </Button>
                 </div>
 
                 <Separator />
 
-                 <div>
+                <div>
                   <h3 className="font-headline text-lg font-semibold mb-4">Certificates</h3>
                   <div className="space-y-6">
                     {certFields.map((field, index) => (
                       <Card key={field.id} className="p-4 print:border-none print:shadow-none">
-                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                           <FormField name={`certificates.${index}.name`} control={form.control} render={({ field }) => (
-                              <FormItem><FormLabel>Certificate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                          )}/>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          <FormField name={`certificates.${index}.name`} control={form.control} render={({ field }) => (
+                            <FormItem><FormLabel>Certificate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
                           <FormField name={`certificates.${index}.issuer`} control={form.control} render={({ field }) => (
-                              <FormItem><FormLabel>Issuer</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                          )}/>
+                            <FormItem><FormLabel>Issuer</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
                         </div>
-                         <FormField name={`certificates.${index}.date`} control={form.control} render={({ field }) => (
-                            <FormItem className="mt-4"><FormLabel>Date</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
-                        <Button variant="destructive" size="sm" onClick={() => removeCert(index)} className="mt-4 print:hidden"><Trash2 className="mr-2 h-4 w-4" /> Remove Certificate</Button>
+                        <FormField name={`certificates.${index}.date`} control={form.control} render={({ field }) => (
+                          <FormItem className="mt-4"><FormLabel>Date</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => handleRemoveCertificate(index, e)}
+                          className="mt-4 print:hidden"
+                          type="button"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Remove Certificate
+                        </Button>
                       </Card>
                     ))}
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => appendCert({ name: '', issuer: '', date: '' })} className="mt-4 print:hidden"><PlusCircle className="mr-2 h-4 w-4" /> Add Certificate</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddCertificate}
+                    className="mt-4 print:hidden"
+                    type="button"
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Certificate
+                  </Button>
                 </div>
-                
+
                 <Separator />
-                
+
                 <FormField name="skills" control={form.control} render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="font-headline text-lg font-semibold">Skills</FormLabel>
-                        <FormControl><Textarea {...field} placeholder="e.g. JavaScript, React, Leadership" /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                  <FormItem>
+                    <FormLabel className="font-headline text-lg font-semibold">Skills</FormLabel>
+                    <FormControl><Textarea {...field} placeholder="e.g. JavaScript, React, Leadership" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
               </form>
             </Form>
           </CardContent>
           <CardHeader className="print:hidden">
-              <Button className="w-full" onClick={handleDownload}>
+            <Button className="w-full" onClick={handleDownload}>
               <Download className="mr-2 h-4 w-4" /> Download PDF
             </Button>
           </CardHeader>
@@ -565,19 +703,37 @@ export function ResumeBuilderClient() {
       </div>
       <div className="order-1 md:order-2">
         <div className="sticky top-8">
-            <h3 className="font-headline text-lg font-semibold mb-4 text-center">Live Preview</h3>
-            <div 
-              id="resume-preview-wrapper"
-              className="w-[300px] h-[424px] mx-auto bg-background shadow-lg rounded-md overflow-hidden"
+          <h3 className="font-headline text-lg font-semibold mb-4 text-center">Live Preview</h3>
+          {/* Live Preview (scaled down) */}
+          <div
+            id="resume-preview-wrapper"
+            className="w-[300px] h-[424px] mx-auto bg-background shadow-lg rounded-md overflow-hidden"
+          >
+            <div
+              id="resume-preview"
+              className="w-[800px] h-[1128px] origin-top-left bg-white"
+              style={{ transform: 'scale(0.375)' }}
             >
-              <div 
-                id="resume-preview"
-                className="w-[800px] h-[1128px] origin-top-left bg-white"
-                style={{ transform: 'scale(0.375)' }}
-              >
-                  <ResumePreview {...resumeData} />
-              </div>
+              <ResumePreview {...resumeData} />
             </div>
+          </div>
+
+
+          {/* Hidden full-resolution resume for PDF export */}
+<div
+  id="resume-full"
+  style={{
+    position: "absolute",
+    top: "-9999px",
+    left: "-9999px",
+    //visibility: "hidden", // not hidden via display:none
+  }}
+>
+  <div className="w-[800px] h-[1128px] bg-white">
+    <ResumePreview {...resumeData} />
+  </div>
+</div>
+
         </div>
       </div>
     </div>
