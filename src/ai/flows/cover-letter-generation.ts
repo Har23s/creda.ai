@@ -1,11 +1,7 @@
 'use server';
 
 /**
- * @fileOverview A flow to generate a cover letter based on a job description.
- *
- * - generateCoverLetter - A function that handles the cover letter generation process.
- * - GenerateCoverLetterInput - The input type for the generateCoverLetter function.
- * - GenerateCoverLetterOutput - The return type for the generateCoverLetter function.
+
  */
 
 import {ai} from '@/ai/genkit';
