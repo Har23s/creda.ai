@@ -3,9 +3,7 @@
 /**
  * @fileOverview A flow to optimize a resume based on a job description for ATS systems.
  *
- * - atsResumeOptimization - A function that handles the resume optimization process.
- * - AtsResumeOptimizationInput - The input type for the atsResumeOptimization function.
- * - AtsResumeOptimizationOutput - The return type for the atsResumeOptimization function.
+
  */
 
 import {ai} from '@/ai/genkit';
