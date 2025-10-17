@@ -1,11 +1,7 @@
 'use server';
 
 /**
- * @fileOverview A flow to parse a resume file and extract structured data.
- *
- * - parseResume - A function that handles the resume parsing process.
- * - ParseResumeInput - The input type for the parseResume function.
- * - ParseResumeOutput - The return type for the parseResume function.
+
  */
 
 import { ai } from '@/ai/genkit';
