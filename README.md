@@ -64,7 +64,7 @@ Cloud Functions for trigger-based automation
 
 AI System Design
 
-Creda.ai uses LLM-powered resume intelligence to:
+Creda.ai uses LLM-powered resume intelligence too:
 
 Parse user resumes
 
