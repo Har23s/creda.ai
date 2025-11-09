@@ -78,7 +78,7 @@ Workflow Example
 
 User uploads resume or starts from a blank template.
 
-System analyzes experience and extracts skills and achievements.
+Systemm analyzes experience and extracts skills and achievements.
 
 AI suggests improvements for ATS optimization.
 
