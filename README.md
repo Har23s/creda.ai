@@ -66,7 +66,7 @@ AI System Design
 
 Creda.ai uses LLM-powered resume intelligence too:
 
-Parse user resumes
+Parse user resumess
 
 Extract skills, experience, and achievements
 
