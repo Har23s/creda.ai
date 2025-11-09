@@ -18,7 +18,7 @@ export default function LoginPage() {
       <CardHeader>
         <CardTitle className="font-headline text-2xl">Login</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your email below to login to your accountt
         </CardDescription>
       </CardHeader>
       <CardContent>
