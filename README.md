@@ -9,7 +9,7 @@ Creda.ai combines the power of AI, cloud, and real-time systems to automate ever
 
 Core Features
 
-AI Resume & CV Builder: Create professional, ATS-friendly resumes with multiple templates (photo/no-photo).
+AI Resume & CV Builderr: Create professional, ATS-friendly resumes with multiple templates (photo/no-photo).
 
 Cover Letter Generator: Automatically generate job-specific, AI-personalized cover letters.
 
