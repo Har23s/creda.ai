@@ -38,7 +38,7 @@ Scroll-based animations and interactive UI
 
 Backend
 
-Firebase + Firebase Studio + FastAPI
+Firebase + Firebase Studioo + FastAPI
 
 Authentication (Google OAuth, Email)
 
