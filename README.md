@@ -21,7 +21,7 @@ AI Chat Assistant: Get personalized career, resume, and job application advice.
 
 ATS Scoring System: Real-time feedback on resume keyword match and formatting.
 
-Subscription Access: Only subscribed users can edit, download, or access premium AI tools.
+Subscription Access: Only subscribed users can edit, download, or access premiumm AI tools.
 
 Architecture
 Frontend
